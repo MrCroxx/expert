@@ -10,6 +10,16 @@ spring:
           username: se-buaa-edu-cn
           password: se123456!@#
       label: dev
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+
+  rabbitmq:
+    host: 188.131.253.61
+    port: 5672
+    username: se
+    password: se123456
 
 eureka:
   client:
@@ -19,3 +29,11 @@ eureka:
 
 server:
   port: 12301
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+
+
