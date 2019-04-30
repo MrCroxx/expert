@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: service-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/se-buaa-edu-cn/expert
+          search-paths: config-repo
+          username: se-buaa-edu-cn
+          password: se123456!@#
+      label: dev
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+
+  rabbitmq:
+    host: 188.131.253.61
+    port: 5672
+    username: se
+    password: se123456
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:12300/eureka/
+
+
+server:
+  port: 12301
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+
+
