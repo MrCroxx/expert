@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: service-hi
+  cloud:
+    config:
+      label: dev
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: service-config
+
+server:
+  port: 12400
+
+eureka:
+  client:
+    service-url: http://localhost:12300/eureka/
