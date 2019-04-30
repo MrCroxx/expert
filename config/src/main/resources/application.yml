@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: service-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/se-buaa-edu-cn/expert
+          search-paths: config-repo
+          username: se-buaa-edu-cn
+          password: se123456!@#
+      label: dev
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:12300/eureka/
+
+
+server:
+  port: 12301
