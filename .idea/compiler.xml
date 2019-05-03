@@ -8,7 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="config" />
         <module name="eureka" />
+        <module name="gateway" />
         <module name="hi" />
+        <module name="oauth2" />
       </profile>
     </annotationProcessing>
   </component>
@@ -16,7 +18,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="config" options="-parameters" />
       <module name="eureka" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="hi" options="-parameters" />
+      <module name="oauth2" options="-parameters" />
     </option>
   </component>
 </project>

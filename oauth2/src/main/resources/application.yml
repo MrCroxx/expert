@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: service-auth
+  datasource:
+    url: jdbc:mysql://188.131.253.61:3306/se
+    username: se
+    password: se123456!@#
+    driver-class-name: com.mysql.jdbc.Driver
+
+server:
+  port: 12302
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:12300/eureka/
+
+auth-service:
+  secret: se-auth
+  jks-path: se.jks
+  jks-secret: se123456!@#
+  jks-alias: expert
+
+app:
+  version: @project.version@
