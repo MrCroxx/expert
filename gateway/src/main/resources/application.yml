@@ -1,0 +1,35 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:12300/eureka/
+
+server:
+  port: 12380
+
+spring:
+  application:
+    name: service-gateway
+
+zuul:
+  # routes:
+  #  auth:
+  #    path: /service-auth/**
+  #    serviceId: service-auth
+  #  hi:
+  #    path: /service-hi/**
+  #    serviceId: service-hi
+  add-proxy-headers: true
+  sensitive-headers: Cookie,Set-Cookie
+
+basic:
+  client-id: zuul
+  client-secret: se-auth
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+app:
+  version: @project.version@
