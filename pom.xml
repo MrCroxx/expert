@@ -23,6 +23,7 @@
         <module>eureka</module>
         <module>gateway</module>
         <module>config</module>
+        <module>oauth2</module>
         <!-- Test Module -->
         <module>hi</module>
     </modules>

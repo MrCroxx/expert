@@ -6,7 +6,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RefreshScope
 class HiController {
     @Value("\${hi.hi-word}")
-    lateinit var hi_word: String
+    lateinit var hiWord: String
 
     @Value("\${server.port}")
     lateinit var port: String
@@ -25,7 +24,7 @@ class HiController {
         val authentication = SecurityContextHolder.getContext().authentication
         val logger = LoggerFactory.getLogger(this.javaClass)
         logger.info(authentication.toString())
-        return "$hi_word, ${authentication.principal}, from port: $port"
+        return "$hiWord, ${authentication.principal}, from port: $port"
     }
 
 }
