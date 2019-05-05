@@ -85,6 +85,12 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Open Feign 依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        
 ```
 ### 3.2 项目配置
 #### 3.2.1 Eureka Client
@@ -199,6 +205,26 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
 为需要身份鉴权的API方法上添加身份鉴权注解。身份权限格式为*ROLE_XXX*，具体值请参考*oauth2*模块下的*entity.kt*文件中的枚举类*ROLE*：
 ```kotlin
 @PreAuthorize("hasAuthority('ROLE_XXX')")
+```
+为*Feign*配置全局的*Authorization*头信息，防止*Feign*调用时*Authorization*头丢失。创建配置类：
+```kotlin
+@Configuration
+class FeignOauth2RequestInterceptor : RequestInterceptor {
+
+    companion object {
+        const val AUTHORIZATION_HEADER = "Authorization"
+        const val BEARER_TOKEN_TYPE = "Bearer"
+    }
+
+    override fun apply(requestTemplate: RequestTemplate) {
+        val securityContext = SecurityContextHolder.getContext()
+        val authentication = securityContext.authentication
+        if (authentication != null && authentication.details is OAuth2AuthenticationDetails) {
+            val details: OAuth2AuthenticationDetails = authentication.details as OAuth2AuthenticationDetails
+            requestTemplate.header(AUTHORIZATION_HEADER, "$BEARER_TOKEN_TYPE ${details.tokenValue}")
+        }
+    }
+}
 ```
 #### 3.2.4 Swagger2
 在*application.yml*中插入*app.version*属性，获取*pom*文件中的*version*值：
