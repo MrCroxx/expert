@@ -1,13 +1,17 @@
 package cn.edu.buaa.se.hi
 
+import feign.RequestInterceptor
+import feign.RequestTemplate
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
@@ -90,4 +94,22 @@ class SwaggerConfig {
             .build()
 
 
+}
+
+@Configuration
+class FeignOauth2RequestInterceptor : RequestInterceptor {
+
+    companion object {
+        const val AUTHORIZATION_HEADER = "Authorization"
+        const val BEARER_TOKEN_TYPE = "Bearer"
+    }
+
+    override fun apply(requestTemplate: RequestTemplate) {
+        val securityContext = SecurityContextHolder.getContext()
+        val authentication = securityContext.authentication
+        if (authentication != null && authentication.details is OAuth2AuthenticationDetails) {
+            val details: OAuth2AuthenticationDetails = authentication.details as OAuth2AuthenticationDetails
+            requestTemplate.header(AUTHORIZATION_HEADER, "$BEARER_TOKEN_TYPE ${details.tokenValue}")
+        }
+    }
 }
