@@ -2,99 +2,121 @@ package cn.edu.buaa.se.account
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
-import org.springframework.dao.DataAccessException
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import javax.annotation.Resource
-import javax.jws.soap.SOAPBinding
-import javax.validation.constraints.Email
 
 @Service
 class UserService{
-    @Resource
+    @Autowired
     lateinit var userMapper: UserMapper;
 
-    fun ListUsers(): List<User>? {
+    fun listUsers(): List<User>{
         return userMapper.selectList(QueryWrapper<User>())
     }
 
-    fun AddUser(username:String,password:String):String{
+    fun addUser(username:String,password:String):Int{
         var encoder= BCryptPasswordEncoder()
-        var newUser=User(username = username,password = encoder.encode(password.trim()))
+        var newUser=User(username = username,password = encoder.encode(password.trim()),role = 1)
         userMapper.insert(newUser)
-        return "success:insert user"
+        return SUCCESS
     }
 
-    fun ChangePassword(username:String,password:String,newpassword:String):String{
-        if(UserConfirms(username))
+    fun changePassword(username:String,password:String,newpassword:String):Int{
+        if(userConfirms(username))
         {
-            UpdatePassword(username,password,newpassword)
+            return updatePassword(username,password,newpassword)
         }
-        return "fail:unknown user"
+        return UNKNOWN_USER
     }
 
-    fun UpdatePassword(username:String,password:String,newpassword: String):String{
-        var encoder= BCryptPasswordEncoder()
-        var user:User=userMapper.selectOne(QueryWrapper<User>().eq("username",username))
+    fun updatePassword(username:String,password:String,newpassword: String):Int{
+        val encoder= BCryptPasswordEncoder()
+        val user:User=userMapper.selectByUsername(username)
         if(encoder.matches(password,user.password))
         {
             if(encoder.matches(newpassword,user.password))
             {
-                return "fail:same password"
+                return SAME_PASSWORD
             }
-            userMapper.update(null,UpdateWrapper<User>(user).set("password",encoder.encode(newpassword).trim()))
-            return "success:update password"
+            userMapper.updatePassword(username,encoder.encode(newpassword).trim())
+            return SUCCESS
         }
-        return "fail:wrong password"
+        return WRONG_PASSWORD
     }
 
-    fun UpdateMail(username:String,email: String):String{
-        if(UserConfirms(username))
+    fun updateMail(username:String,email: String):Int{
+        if(userConfirms(username))
         {
-            var user:User=userMapper.selectOne(QueryWrapper<User>().eq("username",username))
-            userMapper.update(null,UpdateWrapper<User>(user).set("email",email))
-            return "success:update email"
+            userMapper.updateEmail(username,email)
+            return SUCCESS
         }
-        return "fail:unkonwn user"
+        return UNKNOWN_USER
     }
 
-    fun UpdateCredit(username:String,credit: Int):String{
-        if(UserConfirms(username))
+    fun updateCredit(username:String,credit: Int):Int{
+        if(userConfirms(username))
         {
-            var user:User=userMapper.selectOne(QueryWrapper<User>().eq("username",username))
-            userMapper.update(null,UpdateWrapper<User>(user).set("credit",credit+user.credit))
-            return "success:update credit"
+            userMapper.updateCredit(username,credit)
+            return SUCCESS
         }
-        return "fail:unkonwn user"
+        return UNKNOWN_USER
     }
 
-    fun UserConfirms(username:String):Boolean{
-        return (userMapper.selectList(QueryWrapper<User>().eq("username",username)).size==1)
+    fun userConfirms(username:String):Boolean{
+        return (userMapper.selectCount(username)==1)
+    }
+
+    fun userCount(username: String):Int{
+        return userMapper.selectCount(username)
     }
 
 }
 
 @Service
 class ExpertService{
-    @Resource
+    @Autowired
     lateinit var expertMapper:ExpertMapper;
+    lateinit var userMapper: UserMapper
 
-    fun ListExperts():List<Expert>?{
+    fun listExperts():List<Expert>?{
         return expertMapper.selectList(QueryWrapper<Expert>())
     }
 
-    /**
-     *
-     * key:{subject, education, introduction}
-     */
-    fun ChangeInfo(id:Long,key:String,value:String):String{
-        val expertExists:Int=expertMapper.selectList(QueryWrapper<Expert>().eq("id",id)).size
-        if(expertExists==1)
+    fun updateInfo(username:String,key:String,value:String):Int{
+        if(userMapper.selectCount(username)==1)
         {
-            var expert:Expert=expertMapper.selectOne(QueryWrapper<Expert>().eq("id",id))
+            val expert:Expert=expertMapper.selectById(userMapper.selectByUsername(username).id)
             expertMapper.update(null,UpdateWrapper<Expert>(expert).set(key,value))
-            return "success:update "+key
+            return SUCCESS
         }
-        return "fail:unkonwn expert"
+        return UNKNOWN_EXPERT
+    }
+
+    fun updateSubject(username:String,subject:String):Int{
+        if(userMapper.selectCount(username)==1)
+        {
+            expertMapper.updateSubject(subject,userMapper.selectByUsername(username).id)
+            return SUCCESS
+        }
+        return UNKNOWN_EXPERT
+    }
+
+    fun updateEducation(username:String,education:String):Int{
+        if(userMapper.selectCount(username)==1)
+        {
+            expertMapper.updateEducation(education,userMapper.selectByUsername(username).id)
+            return SUCCESS
+        }
+        return UNKNOWN_EXPERT
+    }
+
+    fun updateIntroduction(username:String,introduction:String):Int{
+        if(userMapper.selectCount(username)==1)
+        {
+            expertMapper.updateIntroduction(introduction,userMapper.selectByUsername(username).id)
+            return SUCCESS
+        }
+        return UNKNOWN_EXPERT
     }
 }

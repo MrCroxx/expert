@@ -1,10 +1,5 @@
 package cn.edu.buaa.se.account
 
-import com.baomidou.mybatisplus.annotation.IdType
-import com.baomidou.mybatisplus.annotation.TableField
-import java.lang.reflect.Type
-
-
 data class User(
         var id: Long=0,
         var username: String="",
@@ -12,7 +7,7 @@ data class User(
         var email: String="",
         var credit: Int=0,
         var frozenCredit: Int=0,
-        var role: Short=1
+        var role: Short=0
 
 )
 

@@ -1,13 +1,12 @@
 package cn.edu.buaa.se.account
 
-import com.oracle.deploy.update.UpdateInfo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.context.config.annotation.RefreshScope
-import org.springframework.dao.DataAccessException
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.constraints.Email
 
 @RestController
 @RefreshScope
@@ -15,45 +14,58 @@ import javax.validation.constraints.Email
 class UsersController{
     @Autowired
     lateinit var userService: UserService
-    lateinit var generator: RestResultGenerator
 
-    @GetMapping("/all")
-    fun ListAll():List<User>?{
-        generator.GenResult(userService.ListUsers(),"success")
-        return userService.ListUsers()
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/count")
+    fun countUsers(username:String):ResponseBody<Int>{
+        return ResponseBody(msg="",data = userService.userCount(username))
     }
 
-    @RequestMapping("/confirm")
-    fun UserExists(username:String):String?{
-        return userService.UserConfirms(username).toString()
+    @GetMapping("/list")
+    fun listAll():ResponseBody<List<User>>{
+        return ResponseBody(msg="",data=userService.listUsers())
     }
 
-    @RequestMapping("/updatepassword")
-    fun UpdatePassword(username:String,password: String,newpassword: String):String{
-        if(userService.UserConfirms(username)) {
-            return userService.UpdatePassword(username, password, newpassword)
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @RequestMapping("/changepassword")
+    fun updatePassword(password: String,newpassword: String):ResponseBody<Nothing?>{
+        val rdata:Int
+        val username:String = SecurityContextHolder.getContext().authentication.name
+        if(userService.userConfirms(username)) {
+            rdata=userService.updatePassword(username, password, newpassword)
         }
         else{
-            return "fail:unknown user"
+            rdata= UNKNOWN_USER
         }
+        return ResponseBody(rdata,msg="",data=null)
     }
 
     @RequestMapping("/register")
-    fun Register(username: String,password:String):String?{
-        if(!userService.UserConfirms(username)) {
-            return userService.AddUser(username, password)
+    fun register(username: String,password:String):ResponseBody<Nothing?>{
+        val rdata:Int
+        if(!userService.userConfirms(username)) {
+            rdata=userService.addUser(username, password)
         }
-        return "fail:user exists"
+        else {
+            rdata = USER_EXISTS
+        }
+        return ResponseBody(rdata,msg="",data=null)
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @RequestMapping("/changemail")
-    fun ChangeEmail(username: String,email:String):String?{
-        return userService.UpdateMail(username,email)
+    fun changeEmail(email:String):ResponseBody<Nothing?>{
+        val username=SecurityContextHolder.getContext().authentication.name
+        val rdata=userService.updateMail(username,email)
+        return ResponseBody(rdata,msg="",data=null)
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @RequestMapping("/perchasecredit")
-    fun PerchaseCredits(username:String,credit:Int):String{
-        return userService.UpdateCredit(username,credit)
+    fun perchaseCredits(credit:Int):ResponseBody<Nothing?>{
+        val username=SecurityContextHolder.getContext().authentication.name
+        val rdata=userService.updateCredit(username,credit)
+        return ResponseBody(rdata,msg="",data=null)
     }
 
 }
@@ -65,13 +77,41 @@ class ExpertController{
     @Autowired
     lateinit var expertService:ExpertService
 
-    @GetMapping("/all")
-    fun ListAll():List<Expert>?{
-        return expertService.ListExperts()
+    @GetMapping("/list")
+    fun listAll():ResponseBody<List<Expert>?>{
+        val list= expertService.listExperts()
+        return ResponseBody(msg="",data=list)
     }
 
+    @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @GetMapping("/updateinfo")
-    fun UpdateInfo(id:Long,key:String,value:String):String{
-        return expertService.ChangeInfo(id,key,value)
+    fun updateInfo(key:String,value:String):ResponseBody<Nothing?>{
+        val username=SecurityContextHolder.getContext().authentication.name
+        val rdata= expertService.updateInfo(username,key,value)
+        return ResponseBody(rdata,msg="",data=null)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_EXPERT')")
+    @GetMapping("/updatesubject")
+    fun updateSubject(subject: String):ResponseBody<Nothing?>{
+        val username=SecurityContextHolder.getContext().authentication.name
+        val rdata= expertService.updateSubject(username,subject)
+        return ResponseBody(rdata,msg="",data=null)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_EXPERT')")
+    @GetMapping("/updateecudation")
+    fun updateEducation(education: String):ResponseBody<Nothing?>{
+        val username=SecurityContextHolder.getContext().authentication.name
+        val rdata= expertService.updateEducation(username,education)
+        return ResponseBody(rdata,msg="",data=null)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_EXPERT')")
+    @GetMapping("/updateiintroduction")
+    fun updateIntroduction(introduction: String):ResponseBody<Nothing?>{
+        val username=SecurityContextHolder.getContext().authentication.name
+        val rdata= expertService.updateIntroduction(username,introduction)
+        return ResponseBody(rdata,msg="",data=null)
     }
 }

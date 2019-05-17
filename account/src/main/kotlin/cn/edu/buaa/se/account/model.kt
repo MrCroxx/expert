@@ -1,18 +1,24 @@
 package cn.edu.buaa.se.account
 
-data class ResponseResult<T>(
-    var success:Boolean=false,
-    var message:String="",
-    var data:T,
-    var errorcode:String=""
-)
+import java.util.*
 
-class RestResultGenerator{
-    fun <T>GenResult(data:T,message:String):ResponseResult<T>{
-        lateinit var result:ResponseResult<T>
-        result.data=data
-        result.success=true
-        result.message=message
-        return result
-    }
+const val SUCCESS=0
+const val USER_EXISTS=11
+const val UNKNOWN_USER=12
+const val WRONG_PASSWORD=13
+const val SAME_PASSWORD=14
+const val UNKNOWN_EXPERT=21
+
+interface IResponseBody<T>{
+    var errcode:Int
+    var msg:String
+    var date: Date
+    var data:T
 }
+
+data class ResponseBody<T>(
+        override var errcode: Int=0,
+        override var msg: String,
+        override var date: Date= Date(System.currentTimeMillis()),
+        override var data: T
+):IResponseBody<T>
