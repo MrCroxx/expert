@@ -40,9 +40,14 @@ class OAuth2ResourceServerConfig: ResourceServerConfigurerAdapter(){
                         "/resources/**",
                         "/swagger-ui.html",
                         "/swagger-resources/**",
-                        "/v2/api-docs"
+                        "/v2/api-docs",
+                        "/user/register"
                 )
                 .permitAll()
+                .antMatchers(
+                        "/user/**",
+                        "/expert/**"
+                ).authenticated()
     }
 
     override fun configure(resources: ResourceServerSecurityConfigurer) {
