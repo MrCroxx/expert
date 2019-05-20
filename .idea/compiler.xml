@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="config" />
-        <module name="eureka" />
         <module name="gateway" />
         <module name="hi" />
+        <module name="eureka" />
+        <module name="paper_patent" />
         <module name="oauth2" />
+        <module name="config" />
       </profile>
     </annotationProcessing>
   </component>
@@ -21,6 +22,7 @@
       <module name="gateway" options="-parameters" />
       <module name="hi" options="-parameters" />
       <module name="oauth2" options="-parameters" />
+      <module name="paper_patent" options="-parameters" />
     </option>
   </component>
 </project>
