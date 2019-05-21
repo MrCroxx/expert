@@ -1,5 +1,9 @@
 package cn.edu.buaa.se.account
 
+import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.ApiImplicitParams
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,25 +24,30 @@ class UsersController {
         return ResponseBody(msg = "", data = userService.info(username))
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping("/count")
-    fun countUsers(username: String): ResponseBody<Int> {
-        return ResponseBody(msg = "", data = userService.userCount(username))
-    }
-
+    @ApiOperation(value = "修改用户密码",notes = "修改用户密码")
+    @ApiImplicitParams(
+        ApiImplicitParam(name="password",value = "当前密码",dataType = "String"),
+        ApiImplicitParam(name = "newpassword",value = "新密码",dataType = "String")
+    )
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/password/change")
-    fun updatePassword(password: String, newpassword: String): ResponseBody<Nothing?> {
+    fun updatePassword(@RequestBody rqPassword: RqPassword): ResponseBody<Nothing?> {
         val rdata: Int
         val username: String = SecurityContextHolder.getContext().authentication.name
         if (userService.userConfirms(username)) {
-            rdata = userService.updatePassword(username, password, newpassword)
+            rdata = userService.updatePassword(username, rqPassword.password, rqPassword.newpassword)
         } else {
             rdata = UNKNOWN_USER
         }
         return ResponseBody(rdata, msg = "", data = null)
     }
 
+    @ApiOperation(value = "注册",notes = "注册新账号")
+    @ApiImplicitParams(
+            ApiImplicitParam(name ="username",value = "用户名",dataType = "String"),
+            ApiImplicitParam(name = "password",value = "密码",dataType = "String"),
+            ApiImplicitParam(name = "email",value = "邮箱",dataType = "String")
+    )
     @PostMapping("/register")
     fun register(@RequestBody rqNewUser: RqNewUser): ResponseBody<Nothing?> {
         val rdata: Int
@@ -50,19 +59,23 @@ class UsersController {
         return ResponseBody(rdata, msg = "", data = null)
     }
 
+    @ApiOperation(value = "修改邮箱",notes = "修改邮箱")
+    @ApiImplicitParam(name = "email",value = "邮箱",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/email/change")
-    fun changeEmail(email: String): ResponseBody<Nothing?> {
+    fun changeEmail(@RequestBody rqUser: User): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = userService.updateMail(username, email)
+        val rdata = userService.updateMail(username, rqUser.email)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
+    @ApiOperation(value = "购买积分",notes = "增加积分")
+    @ApiImplicitParam(name = "credit",value = "增加的积分数",dataType = "Int")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/credit/purchase")
-    fun purchaseCredits(credit: Int): ResponseBody<Nothing?> {
+    fun purchaseCredits(@RequestBody rqUser: User): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = userService.updateCredit(username, credit)
+        val rdata = userService.updateCredit(username, rqUser.credit)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
@@ -87,39 +100,33 @@ class ExpertController {
     @GetMapping("/{username}")
     fun expert(@PathVariable username: String): ResponseBody<Expert> = ResponseBody<Expert>(msg = "", data = expertService.info(username))
 
-    // TODO:危险操作!!!!!!!!!!!
-    /*
-    @PreAuthorize("hasAuthority('ROLE_EXPERT')")
-    @GetMapping("/updateinfo")
-    fun updateInfo(key: String, value: String): ResponseBody<Nothing?> {
-        val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateInfo(username, key, value)
-        return ResponseBody(rdata, msg = "", data = null)
-    }
-    */
-
-
+    @ApiOperation(value = "修改专业",notes = "修改专业")
+    @ApiImplicitParam(name = "subject",value = "专业",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/subject/update")
-    fun updateSubject(subject: String): ResponseBody<Nothing?> {
+    fun updateSubject(@RequestBody rqExpert: RqExpert): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateSubject(username, subject)
+        val rdata = expertService.updateSubject(username, rqExpert.subject)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
+    @ApiOperation(value = "修改学历",notes = "修改学历")
+    @ApiImplicitParam(name = "education",value = "学历",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/education/update")
-    fun updateEducation(education: String): ResponseBody<Nothing?> {
+    fun updateEducation(@RequestBody rqExpert: RqExpert): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateEducation(username, education)
+        val rdata = expertService.updateEducation(username, rqExpert.education)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
+    @ApiOperation(value = "修改个人介绍",notes = "修改个人介绍")
+    @ApiImplicitParam(name = "introduction",value = "个人介绍",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/introduction/update")
-    fun updateIntroduction(introduction: String): ResponseBody<Nothing?> {
+    fun updateIntroduction(@RequestBody rqExpert: RqExpert): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateIntroduction(username, introduction)
+        val rdata = expertService.updateIntroduction(username, rqExpert.introduction)
         return ResponseBody(rdata, msg = "", data = null)
     }
 }

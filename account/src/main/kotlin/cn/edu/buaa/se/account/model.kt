@@ -1,6 +1,7 @@
 package cn.edu.buaa.se.account
 
 import java.util.*
+import javax.security.auth.Subject
 
 const val SUCCESS = 0
 const val USER_EXISTS = 11
@@ -35,4 +36,16 @@ data class RqNewUser(
         val username: String,
         val password: String,
         val email: String
+)
+
+data class RqPassword(
+        val password: String,
+        val newpassword:String
+)
+
+data class RqExpert(
+        var id:Long=0,
+        var subject: String="",
+        var education:String="",
+        var introduction:String=""
 )
