@@ -27,11 +27,10 @@ data class User(
 
 ) : UserDetails, Serializable {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        when(role)
-        {
-            3->return mutableListOf(Authority(role),Authority(role-1),Authority(role-2))
-            2->return mutableListOf(Authority(role),Authority(role-1))
-            else->return mutableListOf(Authority(role))
+        return when (ROLE.fromInt(role)) {
+            ROLE.ROLE_ADMIN -> mutableListOf(Authority(ROLE.ROLE_ADMIN.value), Authority(ROLE.ROLE_USER.value))
+            ROLE.ROLE_EXPERT -> mutableListOf(Authority(ROLE.ROLE_EXPERT.value), Authority(ROLE.ROLE_USER.value))
+            else -> mutableListOf(Authority(role))
         }
     }
 
