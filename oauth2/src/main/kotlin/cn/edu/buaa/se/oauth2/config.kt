@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
@@ -116,8 +117,7 @@ class OAuth2Config : AuthorizationServerConfigurerAdapter() {
 @Component
 class CustomTokenEnhancer : TokenEnhancer {
     override fun enhance(accessToken: OAuth2AccessToken, authentication: OAuth2Authentication): OAuth2AccessToken {
-        return accessToken
-        /*
+        // return accessToken
         val at: DefaultOAuth2AccessToken? = accessToken as? DefaultOAuth2AccessToken
         val user: User = (authentication.principal as? User)!!
         at?.additionalInformation = mutableMapOf(
@@ -125,7 +125,7 @@ class CustomTokenEnhancer : TokenEnhancer {
                 "authorities" to user.authorities
         )
         return (at as? OAuth2AccessToken)!!
-        */
+
     }
 }
 
