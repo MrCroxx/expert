@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*
 class UsersController {
     @Autowired
     lateinit var userService: UserService
+    lateinit var followService: FollowService
+
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/")
@@ -63,20 +65,30 @@ class UsersController {
     @ApiImplicitParam(name = "email",value = "邮箱",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/email/change")
-    fun changeEmail(@RequestBody rqUser: User): ResponseBody<Nothing?> {
+    fun changeEmail(@RequestBody rqUser: RpUser): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
         val rdata = userService.updateMail(username, rqUser.email)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
-    @ApiOperation(value = "购买积分",notes = "增加积分")
+    @ApiOperation(value = "购买积分",notes = "增加购买的积分")
     @ApiImplicitParam(name = "credit",value = "增加的积分数",dataType = "Int")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/credit/purchase")
-    fun purchaseCredits(@RequestBody rqUser: User): ResponseBody<Nothing?> {
+    fun purchaseCredits(@RequestBody rqUser: RpUser): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
         val rdata = userService.updateCredit(username, rqUser.credit)
         return ResponseBody(rdata, msg = "", data = null)
+    }
+
+    @ApiOperation(value = "关注专家",notes = "关注一个专家")
+    @ApiImplicitParam(name = "followed",value = "关注的专家",dataType = "Long")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PostMapping("/follow")
+    fun follow(@RequestBody rqFollow: RqFollow):ResponseBody<Nothing?>{
+        val follower=SecurityContextHolder.getContext().authentication.name
+        val rdata=followService.follow(follower,rqFollow.followed,rqFollow.time)
+        return ResponseBody(rdata,msg = "",data = null)
     }
 
 }
@@ -104,9 +116,9 @@ class ExpertController {
     @ApiImplicitParam(name = "subject",value = "专业",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/subject/update")
-    fun updateSubject(@RequestBody rqExpert: RqExpert): ResponseBody<Nothing?> {
+    fun updateSubject(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateSubject(username, rqExpert.subject)
+        val rdata = expertService.updateSubject(username, rpExpert.subject)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
@@ -114,9 +126,9 @@ class ExpertController {
     @ApiImplicitParam(name = "education",value = "学历",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/education/update")
-    fun updateEducation(@RequestBody rqExpert: RqExpert): ResponseBody<Nothing?> {
+    fun updateEducation(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateEducation(username, rqExpert.education)
+        val rdata = expertService.updateEducation(username, rpExpert.education)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
@@ -124,9 +136,9 @@ class ExpertController {
     @ApiImplicitParam(name = "introduction",value = "个人介绍",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/introduction/update")
-    fun updateIntroduction(@RequestBody rqExpert: RqExpert): ResponseBody<Nothing?> {
+    fun updateIntroduction(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateIntroduction(username, rqExpert.introduction)
+        val rdata = expertService.updateIntroduction(username, rpExpert.introduction)
         return ResponseBody(rdata, msg = "", data = null)
     }
 }

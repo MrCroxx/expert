@@ -1,7 +1,7 @@
 package cn.edu.buaa.se.account
 
+import org.springframework.format.annotation.DateTimeFormat
 import java.util.*
-import javax.security.auth.Subject
 
 const val SUCCESS = 0
 const val USER_EXISTS = 11
@@ -20,7 +20,7 @@ interface IResponseBody<T> {
 data class ResponseBody<T>(
         override var errcode: Int = 0,
         override var msg: String = "",
-        override var date: Date = Date(System.currentTimeMillis()),
+        override var date: Date = Date(),
         override var data: T
 ) : IResponseBody<T>
 
@@ -43,9 +43,13 @@ data class RqPassword(
         val newpassword:String
 )
 
-data class RqExpert(
-        var id:Long=0,
+data class RpExpert(
         var subject: String="",
         var education:String="",
         var introduction:String=""
+)
+
+data class RqFollow(
+        var followed:Long,
+        var time:Date=Date()
 )

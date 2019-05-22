@@ -1,5 +1,6 @@
 package cn.edu.buaa.se.account
 
+import java.util.*
 import javax.swing.RootPaneContainer
 
 data class User(
@@ -36,4 +37,10 @@ data class Organization(
         var name: String = "",
         var contact: String = "",
         var rank: Int = 0
+)
+
+data class Follow(
+        var followerId:Long=0,
+        var followedId:Long=0,
+        var time:Date=Date()
 )

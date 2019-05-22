@@ -60,3 +60,7 @@ interface OrganizationMapper : BaseMapper<Organization> {
     @Select("SELECT * FROM organization WHERE id=#{id}")
     fun selectById(id: Long): Organization
 }
+
+@Repository
+@Mapper
+interface FollowMapper:BaseMapper<Follow>{}

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UserService {
@@ -16,8 +17,8 @@ class UserService {
     }
 
     fun addUser(username: String, password: String, email: String): Int {
-        var encoder = BCryptPasswordEncoder()
-        var newUser = User(username = username, password = encoder.encode(password.trim()), email = email, role = 1)
+        val encoder = BCryptPasswordEncoder()
+        val newUser = User(username = username, password = encoder.encode(password.trim()), email = email, role = 1)
         userMapper.insert(newUser)
         return SUCCESS
     }
@@ -113,5 +114,18 @@ class ExpertService {
             return SUCCESS
         }
         return UNKNOWN_EXPERT
+    }
+}
+
+@Service
+class FollowService{
+    @Autowired
+    lateinit var followMapper: FollowMapper
+    lateinit var userMapper: UserMapper
+
+    fun follow(follower:String,followed:Long,time:Date):Int{
+        val newFollow=Follow(userMapper.selectByUsername(follower).id,followed,time)
+        followMapper.insert(newFollow)
+        return SUCCESS
     }
 }
