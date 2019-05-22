@@ -5,22 +5,6 @@ import com.rabbitmq.http.client.domain.UserInfo
 import org.apache.ibatis.annotations.*
 import org.springframework.stereotype.Repository
 
-@Mapper
-@Repository
-interface UserMapper:BaseMapper<User>{
-    @Select("SELECT * FROM user WHERE id = #{id}")
-    @Results(
-        Result(property = "id",column = "id"),
-            Result(property = "username",column = "username"),
-            Result(property = "password",column = "password"),
-            Result(property = "email",column = "email"),
-            Result(property = "credit",column = "credit"),
-            Result(property = "frozen_credit",column = "frozen_credit"),
-            Result(property = "role",column = "role")
-    )
-    fun getUserById(id: Long): User
-
-}
 
 @Mapper
 @Repository
@@ -41,7 +25,7 @@ interface PaperMapper:BaseMapper<Paper>{
     fun findPaperByID(id: Long): Paper
 
     //根据作者获取论文信息
-    @Select("select id,title,author,cite_times,click_times,publish_time,abstract from paper where author = #{author}")
+    @Select("select paper.id,title,author,cite_times,click_times,publish_time,abstract,name from paper,expert where name LIKE #{name} and paper.author = expert.id")
     @Results(
             Result(property = "id",column = "id"),
             Result(property = "title",column = "title"),
@@ -51,9 +35,10 @@ interface PaperMapper:BaseMapper<Paper>{
             Result(property = "cite_times",column = "cite_times"),
             Result(property = "click_times",column = "click_times"),
             Result(property = "publish_time",column = "publish_time"),
-            Result(property = "abstract",column = "abstract")
+            Result(property = "abstract",column = "abstract"),
+            Result(property = "name",column = "name")
     )
-    fun findPaperByAuthor(author: Long): List<Paper>
+    fun findPaperByAuthor(name: String): List<Paper>
 
     //根据题目获取论文信息
     @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE title LIKE #{title}")
@@ -71,9 +56,10 @@ interface PaperMapper:BaseMapper<Paper>{
     fun findPaperByTitle(title: String): List<Paper>
 
     //根据摘要获取论文信息
-    @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
-            "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)")
-    fun findPaperByAbstract(abstract: String): List<Paper>
+    @Select("(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)) UNION " +
+            "(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE abstract LIKE #{abstracts} or title LIKE #{abstracts})")
+    fun findPaperByAbstract(abstract: String,abstracts:String): List<Paper>
 
     //论文点击次数+1
     @Update("UPDATE paper SET click_times = #{p.click_times} + 1 WHERE id = #{p.id}")
@@ -114,7 +100,7 @@ interface PatentMapper:BaseMapper<Patent>{
     )
     fun findPatentByID(id: Long): Patent
 
-    //根据作者获取专利信息
+    //根据题目获取专利信息
     @Select("SELECT * FROM patent WHERE title LIKE #{title}")
     @Results(
             Result(property = "id",column = "id"),

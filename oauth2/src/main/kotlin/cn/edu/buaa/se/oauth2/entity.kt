@@ -26,7 +26,13 @@ data class User(
         var role: Int = 0
 
 ) : UserDetails, Serializable {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(Authority(role))
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        return when (ROLE.fromInt(role)) {
+            ROLE.ROLE_ADMIN -> mutableListOf(Authority(ROLE.ROLE_ADMIN.value), Authority(ROLE.ROLE_USER.value))
+            ROLE.ROLE_EXPERT -> mutableListOf(Authority(ROLE.ROLE_EXPERT.value), Authority(ROLE.ROLE_USER.value))
+            else -> mutableListOf(Authority(role))
+        }
+    }
 
     override fun isEnabled(): Boolean {
         return ROLE.fromInt(role) != ROLE.ROLE_KNOWN
@@ -64,8 +70,9 @@ data class User(
 enum class ROLE constructor(var value: Int) {
     ROLE_KNOWN(0),
     ROLE_USER(1),
-    ROLE_ADMIN(2),
-    ROLE_EXPERT(3);
+    ROLE_EXPERT(2),
+    ROLE_ADMIN(3);
+
 
     companion object {
         fun fromInt(roleId: Int): ROLE = ROLE.values().find { it.value == roleId } ?: ROLE.ROLE_KNOWN
