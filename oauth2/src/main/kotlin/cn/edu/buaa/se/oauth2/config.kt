@@ -121,9 +121,8 @@ class CustomTokenEnhancer : TokenEnhancer {
         val at: DefaultOAuth2AccessToken? = accessToken as? DefaultOAuth2AccessToken
         val user: User = (authentication.principal as? User)!!
         at?.additionalInformation = mutableMapOf(
-                "uid" to user.id,
-                "authorities" to user.authorities
-        )
+                Pair("uid",user.id)
+        ) as Map<String, Any>?
         return (at as? OAuth2AccessToken)!!
 
     }
