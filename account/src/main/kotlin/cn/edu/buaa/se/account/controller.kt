@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RefreshScope
@@ -85,9 +87,13 @@ class UsersController {
     @ApiImplicitParam(name = "followed",value = "关注的专家",dataType = "Long")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/follow")
-    fun follow(@RequestBody rqFollow: RqFollow):ResponseBody<Nothing?>{
-        val follower=SecurityContextHolder.getContext().authentication.name
-        val rdata=followService.follow(follower,rqFollow.followed,rqFollow.time)
+    fun follow(followed:Long):ResponseBody<Nothing?>{
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
+        val rdata=followService.follow(uid,followed, Date())
         return ResponseBody(rdata,msg = "",data = null)
     }
 

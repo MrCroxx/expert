@@ -50,6 +50,5 @@ data class RpExpert(
 )
 
 data class RqFollow(
-        var followed:Long,
-        var time:Date=Date()
+        val followed:Long
 )

@@ -123,8 +123,8 @@ class FollowService{
     lateinit var followMapper: FollowMapper
     lateinit var userMapper: UserMapper
 
-    fun follow(follower:String,followed:Long,time:Date):Int{
-        val newFollow=Follow(userMapper.selectByUsername(follower).id,followed,time)
+    fun follow(id:Long,followed:Long,time:Date):Int{
+        val newFollow=Follow(id,followed,time)
         followMapper.insert(newFollow)
         return SUCCESS
     }
