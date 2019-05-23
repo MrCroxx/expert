@@ -44,12 +44,8 @@ data class RqPassword(
 )
 
 data class RpExpert(
+        var id:Long=0,
         var subject: String="",
         var education:String="",
         var introduction:String=""
-)
-
-data class RqFollow(
-        var followed:Long=0,
-        var date: Date=Date()
 )

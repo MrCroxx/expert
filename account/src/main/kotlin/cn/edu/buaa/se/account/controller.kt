@@ -89,14 +89,14 @@ class UsersController {
     @ApiImplicitParam(name = "followed",value = "要关注的专家",dataType = "Long")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/follow")
-    fun follow(@RequestBody rqFollow: RqFollow):ResponseBody<Nothing?>{
+    fun follow(@RequestBody rpExpert: RpExpert):ResponseBody<Nothing?>{
 
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
 
-        val rdata=followService.followExpert(uid,rqFollow.followed, Date())
+        val rdata=followService.followExpert(uid,rpExpert.id, Date())
         return ResponseBody(rdata,msg = "",data = null)
     }
 
