@@ -1,21 +1,14 @@
 package cn.edu.buaa.se.paper_patent
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
-import com.rabbitmq.http.client.domain.UserInfo
-import org.apache.commons.lang.ObjectUtils
-import org.apache.ibatis.annotations.Param
-import org.apache.ibatis.annotations.Select
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 
 @Service
-class PaperService{
+class PaperService {
 
     @Autowired
     lateinit var paperMapper: PaperMapper
@@ -32,88 +25,57 @@ class PaperService{
         return paperMapper.findPaperByAbstract(abstract)
     }*/
 
-    fun findPaperByAuthor(name: String): List<RpPaper>{
-        var paper:List<Paper> = paperMapper.findPaperByAuthor(name)
-        var papers = mutableListOf<RpPaper>()
-        //var papers:List<RpPaper>
-        var items:RpPaper
-        for (item: Paper in paper) {
-            items = item.toRPaper()
-            papers.add(items)
-        }
-        return papers
-    }
+    fun findPaperById(id: Long): Paper = paperMapper.findPaperByID(id)
 
-    fun findPaperByTitle(title: String): List<RpPaper>{
-        var paper:List<Paper> = paperMapper.findPaperByTitle(title)
-        var papers = mutableListOf<RpPaper>()
-        //var papers:List<RpPaper>
-        var items:RpPaper
-        for (item: Paper in paper) {
-            items = item.toRPaper()
-            papers.add(items)
-        }
-        return papers
-    }
+    fun findPaperByAuthor(name: String): List<Paper> = paperMapper.findPaperByAuthor(name)
 
-    fun findPaperByAbstract(abstract: String,abstracts:String): List<RpPaper>{
-        var paper:List<Paper> = paperMapper.findPaperByAbstract(abstract,abstracts)
-        var papers = mutableListOf<RpPaper>()
-        //var papers:List<RpPaper>
-        var items:RpPaper
-        for (item: Paper in paper) {
-            items = item.toRPaper()
-            papers.add(items)
-        }
-        return papers
-    }
+    fun findPaperByTitle(title: String): List<Paper> = paperMapper.findPaperByAuthor(title)
 
-    fun findpaperIDmax():Long{
+    fun findPaperByAbstract(abstract: String, abstracts: String): List<Paper> = paperMapper.findPaperByAbstract(abstract, abstracts)
+
+    fun findpaperIDmax(): Long {
         return paperMapper.findpaperIDmax()
     }
 
-    fun lookupPaper(id: Long):Int{
-        var papers:Paper = paperMapper.findPaperByID(id)
-        if(papers == null){
+    fun lookupPaper(id: Long): Int {
+        var papers: Paper = paperMapper.findPaperByID(id)
+        if (papers == null) {
             return UNKNOWN_PAPER
-        }
-        else{
-            paperMapper.updateclick_times(papers,id)
+        } else {
+            paperMapper.updateclick_times(papers, id)
             return SUCCESS
         }
     }
 
-    fun insertPaper(paper: Paper):Int{
+    fun insertPaper(paper: Paper): Int {
         paperMapper.insertPaper(paper)
         return SUCCESS
     }
 
-    fun updatePaper(id: Long,title: String,abstract: String):Int{
-        var papers:Paper = paperMapper.findPaperByID(id)
+    fun updatePaper(id: Long, title: String, abstract: String): Int {
+        var papers: Paper = paperMapper.findPaperByID(id)
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
-        if(papers == null || papers.author !=uid){
+        if (papers == null || papers.author != uid) {
             return UNKNOWN_PAPER
-        }
-        else{
-            val p=Paper(id,title,uid,"","",0,0,"",abstract)
-            paperMapper.updatePaper(p,id)
+        } else {
+            val p = Paper(id, title, uid, "", "", 0, 0, Date(), abstract)
+            paperMapper.updatePaper(p, id)
             return SUCCESS
         }
     }
 
-    fun deletePaperById(id: Long):Int{
-        var papers:Paper = paperMapper.findPaperByID(id)
+    fun deletePaperById(id: Long): Int {
+        var papers: Paper = paperMapper.findPaperByID(id)
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
-        if(papers == null|| papers.author !=uid){
+        if (papers == null || papers.author != uid) {
             return UNKNOWN_PAPER
-        }
-        else{
+        } else {
             paperMapper.deletePaperById(id)
             return SUCCESS
         }
@@ -122,7 +84,7 @@ class PaperService{
 
 
 @Service
-class PatentService{
+class PatentService {
 
     @Autowired
     lateinit var patentMapper: PatentMapper
@@ -131,62 +93,51 @@ class PatentService{
     /*fun findPatentByTitle(title: String): List<Patent> {
         return patentMapper.findPatentByTitle(title)
     }*/
-    fun findPatentByTitle(title: String): List<RpPatent>{
-        var patent:List<Patent> = patentMapper.findPatentByTitle(title)
-        var patents = mutableListOf<RpPatent>()
-        var items:RpPatent
-        for (item: Patent in patent) {
-            items = item.toRPatent()
-            patents.add(items)
-        }
-        return patents
-    }
+    fun findPatentByTitle(title: String): List<Patent> = patentMapper.findPatentByTitle(title)
 
-    fun lookupPatent(id: Long):Int{
-        var patents:Patent = patentMapper.findPatentByID(id)
-        if(patents == null){
+
+    fun lookupPatent(id: Long): Int {
+        var patents: Patent = patentMapper.findPatentByID(id)
+        if (patents == null) {
             return UNKNOWN_PATENT
-        }
-        else{
+        } else {
             return SUCCESS
         }
     }
 
-    fun findpatentIDmax():Long{
+    fun findpatentIDmax(): Long {
         return patentMapper.findpatentIDmax()
     }
 
-    fun insertPatent(patent: Patent):Int{
+    fun insertPatent(patent: Patent): Int {
         patentMapper.insertPatent(patent)
         return SUCCESS
     }
 
-    fun updatePatent(id: Long,title: String):Int{
-        var patents:Patent = patentMapper.findPatentByID(id)
+    fun updatePatent(id: Long, title: String): Int {
+        var patents: Patent = patentMapper.findPatentByID(id)
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
-        if(patents == null || patents.applicant_id!=uid){
+        if (patents == null || patents.applicant_id != uid) {
             return UNKNOWN_PATENT
-        }
-        else{
-            val p=Patent(id,title,"","",0,uid)
-            patentMapper.updatePatent(p,id)
+        } else {
+            val p = Patent(id, title, "", "", 0, uid)
+            patentMapper.updatePatent(p, id)
             return SUCCESS
         }
     }
 
-    fun deletePatentById(id: Long):Int{
-        var patents:Patent = patentMapper.findPatentByID(id)
+    fun deletePatentById(id: Long): Int {
+        var patents: Patent = patentMapper.findPatentByID(id)
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
-        if(patents == null || patents.applicant_id!=uid){
+        if (patents == null || patents.applicant_id != uid) {
             return UNKNOWN_PATENT
-        }
-        else{
+        } else {
             patentMapper.deletePatentById(id)
             return SUCCESS
         }
@@ -195,67 +146,62 @@ class PatentService{
 }
 
 
-
 @Service
-class Paper_collectionService{
+class Paper_collectionService {
 
     @Autowired
     lateinit var paper_collectionMapper: Paper_collectionMapper
 
 
-    fun collectionPaper(user_id:Long,paper_id:Long,time:String): Int{
-        var collection:Paper_collection = paper_collectionMapper.findPaper_collection(user_id,paper_id)
-        if(collection != null){
+    fun collectionPaper(user_id: Long, paper_id: Long, time: String): Int {
+        var collection: Paper_collection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
+        if (collection != null) {
             return SAME_PAPERCOLLECTION
         }
         //return userMapper.getUserById(id)
-        else{
-            val p=Paper_collection(user_id,paper_id,time)
+        else {
+            val p = Paper_collection(user_id, paper_id, time)
             paper_collectionMapper.insertPaper_collection(p)
             return SUCCESS
         }
     }
 
-    fun deletePaper_collection(user_id: Long,paper_id: Long):Int{
-        var collection:Paper_collection = paper_collectionMapper.findPaper_collection(user_id,paper_id)
-        if(collection == null){
+    fun deletePaper_collection(user_id: Long, paper_id: Long): Int {
+        var collection: Paper_collection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
+        if (collection == null) {
             return UNKNOWN_PAPERCOLLECTION
-        }
-        else{
-            paper_collectionMapper.deletePaper_collection(user_id,paper_id)
+        } else {
+            paper_collectionMapper.deletePaper_collection(user_id, paper_id)
             return SUCCESS
         }
     }
 }
 
 
-
 @Service
-class Patent_collectionService{
+class Patent_collectionService {
 
     @Autowired
     lateinit var patent_collectionMapper: Patent_collectionMapper
 
 
-    fun collectionPatent(user_id:Long,patent_id:Long,time:String): Int{
-        var collection:Patent_collection = patent_collectionMapper.findPatent_collection(user_id,patent_id)
-        if(collection != null){
+    fun collectionPatent(user_id: Long, patent_id: Long, time: String): Int {
+        var collection: Patent_collection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
+        if (collection != null) {
             return SAME_PATENTCOLLECTION
-        }
-        else{
-            val p=Patent_collection(user_id,patent_id,time)
+        } else {
+            val p = Patent_collection(user_id, patent_id, time)
             patent_collectionMapper.insertPatent_collection(p)
             return SUCCESS
         }
     }
 
-    fun deletePatent_collection(user_id: Long,patent_id: Long):Int{
-        var collection:Patent_collection = patent_collectionMapper.findPatent_collection(user_id,patent_id)
-        if(collection == null){
+    fun deletePatent_collection(user_id: Long, patent_id: Long): Int {
+        var collection: Patent_collection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
+        if (collection == null) {
             return UNKNOWN_PATENTCOLLECTION
-        }
-        else{
-            patent_collectionMapper.deletePatent_collection(user_id,patent_id)
+        } else {
+            patent_collectionMapper.deletePatent_collection(user_id, patent_id)
             return SUCCESS
         }
     }

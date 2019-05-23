@@ -58,8 +58,8 @@ interface PaperMapper:BaseMapper<Paper>{
     //根据摘要获取论文信息
     @Select("(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
             "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)) UNION " +
-            "(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE abstract LIKE #{abstracts} or title LIKE #{abstracts})")
-    fun findPaperByAbstract(abstract: String,abstracts:String): List<Paper>
+            "(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE abstract LIKE #{abstracts} or title LIKE #{title})")
+    fun findPaperByAbstract(abstract: String,title: String): List<Paper>
 
     //论文点击次数+1
     @Update("UPDATE paper SET click_times = #{p.click_times} + 1 WHERE id = #{p.id}")
