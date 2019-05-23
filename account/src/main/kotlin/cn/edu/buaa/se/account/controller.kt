@@ -18,6 +18,8 @@ import java.util.*
 class UsersController {
     @Autowired
     lateinit var userService: UserService
+
+    @Autowired
     lateinit var followService: FollowService
 
 
@@ -67,9 +69,9 @@ class UsersController {
     @ApiImplicitParam(name = "email",value = "邮箱",dataType = "String")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/email/change")
-    fun changeEmail(@RequestBody rqUser: RpUser): ResponseBody<Nothing?> {
+    fun changeEmail(@RequestBody rpUser: RpUser): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = userService.updateMail(username, rqUser.email)
+        val rdata = userService.updateMail(username, rpUser.email)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
@@ -77,23 +79,24 @@ class UsersController {
     @ApiImplicitParam(name = "credit",value = "增加的积分数",dataType = "Int")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/credit/purchase")
-    fun purchaseCredits(@RequestBody rqUser: RpUser): ResponseBody<Nothing?> {
+    fun purchaseCredits(@RequestBody rpUser: RpUser): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = userService.updateCredit(username, rqUser.credit)
+        val rdata = userService.updateCredit(username, rpUser.credit)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
     @ApiOperation(value = "关注专家",notes = "关注一个专家")
-    @ApiImplicitParam(name = "followed",value = "关注的专家",dataType = "Long")
+    @ApiImplicitParam(name = "followed",value = "要关注的专家",dataType = "Long")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/follow")
-    fun follow(followed:Long):ResponseBody<Nothing?>{
+    fun follow(@RequestBody rqFollow: RqFollow):ResponseBody<Nothing?>{
+
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
 
-        val rdata=followService.follow(uid,followed, Date())
+        val rdata=followService.followExpert(uid,rqFollow.followed, Date())
         return ResponseBody(rdata,msg = "",data = null)
     }
 
@@ -103,7 +106,6 @@ class UsersController {
 @RefreshScope
 @RequestMapping("/expert")
 class ExpertController {
-
 
     @Autowired
     lateinit var expertService: ExpertService
@@ -123,8 +125,13 @@ class ExpertController {
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/subject/update")
     fun updateSubject(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
-        val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateSubject(username, rpExpert.subject)
+
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
+        val rdata = expertService.updateSubject(uid, rpExpert.subject)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
@@ -133,8 +140,12 @@ class ExpertController {
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/education/update")
     fun updateEducation(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
-        val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateEducation(username, rpExpert.education)
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
+        val rdata = expertService.updateEducation(uid, rpExpert.education)
         return ResponseBody(rdata, msg = "", data = null)
     }
 
@@ -143,8 +154,12 @@ class ExpertController {
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/introduction/update")
     fun updateIntroduction(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
-        val username = SecurityContextHolder.getContext().authentication.name
-        val rdata = expertService.updateIntroduction(username, rpExpert.introduction)
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
+        val rdata = expertService.updateIntroduction(uid, rpExpert.introduction)
         return ResponseBody(rdata, msg = "", data = null)
     }
 }

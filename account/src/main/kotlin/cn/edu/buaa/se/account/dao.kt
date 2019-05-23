@@ -32,6 +32,7 @@ interface ExpertMapper : BaseMapper<Expert> {
     @Select("select * from expert where id=#{id}")
     fun selectById(id: Long): Expert
 
+
     @Select("SELECT * FROM expert JOIN user ON expert.id=user.id WHERE user.username=#{username}")
     @Results(
             Result(property = "id", column = "id"),

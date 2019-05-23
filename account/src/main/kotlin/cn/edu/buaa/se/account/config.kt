@@ -49,8 +49,7 @@ class OAuth2ResourceServerConfig: ResourceServerConfigurerAdapter(){
                         "/swagger-ui.html",
                         "/swagger-resources/**",
                         "/v2/api-docs",
-                        "/user/register",
-                        "/user/test"
+                        "/user/register"
                 )
                 .permitAll()
                 .antMatchers(
@@ -77,6 +76,7 @@ class OAuth2ResourceServerConfig: ResourceServerConfigurerAdapter(){
     fun accessTokenConverter():JwtAccessTokenConverter{
         val converter=JwtAccessTokenConverter()
         converter.setVerifierKey(getPublicKey())
+        converter.accessTokenConverter = customAccessTokenConverter
         return converter
     }
 

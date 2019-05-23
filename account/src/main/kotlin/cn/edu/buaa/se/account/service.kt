@@ -75,7 +75,6 @@ class UserService {
 class ExpertService {
     @Autowired
     lateinit var expertMapper: ExpertMapper;
-    lateinit var userMapper: UserMapper
 
     fun listExperts(): List<Expert>? {
         return expertMapper.selectList(QueryWrapper<Expert>())
@@ -83,37 +82,19 @@ class ExpertService {
 
     fun info(username: String): Expert = expertMapper.selectByUsername(username)
 
-    fun updateInfo(username: String, key: String, value: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            val expert: Expert = expertMapper.selectById(userMapper.selectByUsername(username).id)
-            expertMapper.update(null, UpdateWrapper<Expert>(expert).set(key, value))
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+    fun updateSubject(id:Long, subject: String): Int {
+        expertMapper.updateSubject(subject, id)
+        return SUCCESS
     }
 
-    fun updateSubject(username: String, subject: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            expertMapper.updateSubject(subject, userMapper.selectByUsername(username).id)
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+    fun updateEducation(id:Long, education: String): Int {
+        expertMapper.updateEducation(education, id)
+        return SUCCESS
     }
 
-    fun updateEducation(username: String, education: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            expertMapper.updateEducation(education, userMapper.selectByUsername(username).id)
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
-    }
-
-    fun updateIntroduction(username: String, introduction: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            expertMapper.updateIntroduction(introduction, userMapper.selectByUsername(username).id)
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+    fun updateIntroduction(id:Long, introduction: String): Int {
+        expertMapper.updateIntroduction(introduction, id)
+        return SUCCESS
     }
 }
 
@@ -121,9 +102,8 @@ class ExpertService {
 class FollowService{
     @Autowired
     lateinit var followMapper: FollowMapper
-    lateinit var userMapper: UserMapper
 
-    fun follow(id:Long,followed:Long,time:Date):Int{
+    fun followExpert(id:Long,followed:Long,time:Date):Int{
         val newFollow=Follow(id,followed,time)
         followMapper.insert(newFollow)
         return SUCCESS
