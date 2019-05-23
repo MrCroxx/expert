@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: service-paper_patent
+  cloud:
+    config:
+      label: dev
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: service-config
+
+server:
+  port: 12410
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:12300/eureka/
+
