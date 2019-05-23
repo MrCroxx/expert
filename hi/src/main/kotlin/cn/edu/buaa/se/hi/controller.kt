@@ -19,7 +19,8 @@ class HiController {
     @Value("\${server.port}")
     lateinit var port: String
 
-    // @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/hi")
     fun hi(): String {
         val logger = LoggerFactory.getLogger(this.javaClass)
