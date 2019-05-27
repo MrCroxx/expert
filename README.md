@@ -157,6 +157,8 @@ management:
 @EnableResourceServer
 class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
 
+    @Autowired
+    lateinit var customAccessTokenConverter: CustomAccessTokenConverter
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
@@ -187,6 +189,7 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
     fun accessTokenConverter(): JwtAccessTokenConverter {
         val converter = JwtAccessTokenConverter()
         converter.setVerifierKey(getPublicKey())
+        converter.accessTokenConverter = customAccessTokenConverter
         return converter
     }
 
@@ -196,6 +199,15 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
         return br.lines().collect(Collectors.joining("\n"))
     }
 
+}
+
+@Component
+class CustomAccessTokenConverter : DefaultAccessTokenConverter() {
+    override fun extractAuthentication(claims: MutableMap<String, *>): OAuth2Authentication {
+        val authentication = super.extractAuthentication(claims)
+        authentication.details = claims
+        return authentication
+    }
 }
 ```
 为项目的启动类添加全局方法安全注解：
@@ -273,6 +285,14 @@ spring:
 ```kotlin
 val authentication = SecurityContextHolder.getContext().authentication
 ```
+通过*authentication*对象获取额外Jwt信息，如uid：
+```kotlin
+val authentication = SecurityContextHolder.getContext().authentication
+val details = authentication.details as OAuth2AuthenticationDetails
+val decodedDetails = details.decodedDetails as MutableMap<String, *>
+val uid: Long = (decodedDetails["uid"] as Int).toLong()
+```
+**!!如果获取uid代码不成功，请根据文档3.2.3节更新资源服务器的OAuth2 Resource Server Config**
 #### 3.3.2 微服务间调用
 使用*Feign*调用。
 

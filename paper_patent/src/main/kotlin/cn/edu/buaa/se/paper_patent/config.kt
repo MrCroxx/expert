@@ -2,6 +2,7 @@ package cn.edu.buaa.se.paper_patent
 
 import feign.RequestInterceptor
 import feign.RequestTemplate
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,11 +12,14 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer
+import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
+import org.springframework.stereotype.Component
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
@@ -27,25 +31,30 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.stream.Collectors
 
+
 @Configuration
 @EnableResourceServer
 class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
 
+    @Autowired
+    lateinit var customAccessTokenConverter: CustomAccessTokenConverter
 
     override fun configure(http: HttpSecurity) {
-        http
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers(
                         "/webjars/**",
                         "/resources/**",
                         "/swagger-ui.html",
                         "/swagger-resources/**",
-                        "/v2/api-docs")
+                        "/v2/api-docs",
+                        "/user/register")
                 .permitAll()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/userlist")
-                .authenticated()
+                .antMatchers(
+                        "/paper/**",
+                        "/patent/**",
+                        "/paper_collection/**",
+                        "/patent_collection/**"
+                ).authenticated()
     }
 
     override fun configure(resources: ResourceServerSecurityConfigurer) {
@@ -66,6 +75,7 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
     fun accessTokenConverter(): JwtAccessTokenConverter {
         val converter = JwtAccessTokenConverter()
         converter.setVerifierKey(getPublicKey())
+        converter.accessTokenConverter = customAccessTokenConverter
         return converter
     }
 
@@ -76,6 +86,16 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
     }
 
 }
+
+@Component
+class CustomAccessTokenConverter : DefaultAccessTokenConverter() {
+    override fun extractAuthentication(claims: MutableMap<String, *>): OAuth2Authentication {
+        val authentication = super.extractAuthentication(claims)
+        authentication.details = claims
+        return authentication
+    }
+}
+
 
 @Configuration
 class FeignOauth2RequestInterceptor : RequestInterceptor {

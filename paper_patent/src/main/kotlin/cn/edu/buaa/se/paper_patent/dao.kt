@@ -5,30 +5,15 @@ import com.rabbitmq.http.client.domain.UserInfo
 import org.apache.ibatis.annotations.*
 import org.springframework.stereotype.Repository
 
-@Mapper
-@Repository
-interface UserMapper:BaseMapper<User>{
-    @Select("SELECT * FROM user WHERE id = #{id}")
-    @Results(
-        Result(property = "id",column = "id"),
-            Result(property = "username",column = "username"),
-            Result(property = "password",column = "password"),
-            Result(property = "email",column = "email"),
-            Result(property = "credit",column = "credit"),
-            Result(property = "frozen_credit",column = "frozen_credit"),
-            Result(property = "role",column = "role")
-    )
-    fun getUserById(id: Long): User
-
-}
 
 @Mapper
 @Repository
 interface PaperMapper:BaseMapper<Paper>{
     //根据id获取论文信息
-    @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE id = #{id}")
+    @Select("SELECT paper.id as pid,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE paper.id = #{id}")
     @Results(
-            Result(property = "id",column = "id"),
+            Result(property = "id",column = "pid"),
             Result(property = "title",column = "title"),
             Result(property = "author",column = "author"),
             Result(property = "paper_rec",column = "paper_rec"),
@@ -40,40 +25,128 @@ interface PaperMapper:BaseMapper<Paper>{
     )
     fun findPaperByID(id: Long): Paper
 
-    //根据作者获取论文信息
-    @Select("select id,title,author,cite_times,click_times,publish_time,abstract from paper where author = #{author}")
+    //专家查看个人论文列表
+    @Select("select paper.id,title,author,cite_times,click_times,publish_time,abstract,name from paper,expert " +
+            "where paper.author = expert.id and author = #{uid} ORDER BY publish_time DESC , id ASC limit #{currIndex} ," + pageSize )
     @Results(
             Result(property = "id",column = "id"),
             Result(property = "title",column = "title"),
             Result(property = "author",column = "author"),
-            Result(property = "paper_rec",column = "paper_rec"),
-            Result(property = "data_rec",column = "data_rec"),
             Result(property = "cite_times",column = "cite_times"),
             Result(property = "click_times",column = "click_times"),
             Result(property = "publish_time",column = "publish_time"),
-            Result(property = "abstract",column = "abstract")
+            Result(property = "abstract",column = "abstract"),
+            Result(property = "name",column = "name")
     )
-    fun findPaperByAuthor(author: Long): List<Paper>
+    fun viewingPersonalPapers(uid: Long,currIndex: Int): List<Paper>
 
-    //根据题目获取论文信息
-    @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE title LIKE #{title}")
+    //根据作者获取论文信息(按点击量排序)
+    @Select("select paper.id,title,author,cite_times,click_times,publish_time,abstract,name from paper,expert " +
+            "where name LIKE #{name} and paper.author = expert.id ORDER BY click_times DESC , id ASC limit #{currIndex} ," + pageSize )
     @Results(
             Result(property = "id",column = "id"),
             Result(property = "title",column = "title"),
             Result(property = "author",column = "author"),
-            Result(property = "paper_rec",column = "paper_rec"),
-            Result(property = "data_rec",column = "data_rec"),
             Result(property = "cite_times",column = "cite_times"),
             Result(property = "click_times",column = "click_times"),
             Result(property = "publish_time",column = "publish_time"),
-            Result(property = "abstract",column = "abstract")
+            Result(property = "abstract",column = "abstract"),
+            Result(property = "name",column = "name")
     )
-    fun findPaperByTitle(title: String): List<Paper>
+    fun findPaperByAuthor_click_times(name: String,currIndex: Int): List<Paper>
 
-    //根据摘要获取论文信息
+    //根据作者获取论文信息(按被引量排序)
+    @Select("select paper.id,title,author,cite_times,click_times,publish_time,abstract,name from paper,expert " +
+            "where name LIKE #{name} and paper.author = expert.id ORDER BY cite_times DESC , id ASC limit #{currIndex} ," + pageSize )
+    @Results(
+            Result(property = "id",column = "id"),
+            Result(property = "title",column = "title"),
+            Result(property = "author",column = "author"),
+            Result(property = "cite_times",column = "cite_times"),
+            Result(property = "click_times",column = "click_times"),
+            Result(property = "publish_time",column = "publish_time"),
+            Result(property = "abstract",column = "abstract"),
+            Result(property = "name",column = "name")
+    )
+    fun findPaperByAuthor_cite_times(name: String,currIndex: Int): List<Paper>
+
+    //根据作者获取论文信息(按时间排序)
+    @Select("select paper.id,title,author,cite_times,click_times,publish_time,abstract,name from paper,expert " +
+            "where name LIKE #{name} and paper.author = expert.id ORDER BY publish_time DESC , id ASC limit #{currIndex} ," + pageSize )
+    @Results(
+            Result(property = "id",column = "id"),
+            Result(property = "title",column = "title"),
+            Result(property = "author",column = "author"),
+            Result(property = "cite_times",column = "cite_times"),
+            Result(property = "click_times",column = "click_times"),
+            Result(property = "publish_time",column = "publish_time"),
+            Result(property = "abstract",column = "abstract"),
+            Result(property = "name",column = "name")
+    )
+    fun findPaperByAuthor_publish_time(name: String,currIndex: Int): List<Paper>
+
+    //根据题目获取论文信息（按点击量）
     @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
-            "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)")
-    fun findPaperByAbstract(abstract: String): List<Paper>
+            "WHERE title LIKE #{title} ORDER BY click_times DESC , id ASC limit #{currIndex} ," + pageSize )
+    @Results(
+            Result(property = "id",column = "id"),
+            Result(property = "title",column = "title"),
+            Result(property = "author",column = "author"),
+            Result(property = "cite_times",column = "cite_times"),
+            Result(property = "click_times",column = "click_times"),
+            Result(property = "publish_time",column = "publish_time"),
+            Result(property = "abstract",column = "abstract")
+    )
+    fun findPaperByTitle_click_times(title: String,currIndex: Int): List<Paper>
+
+    //根据题目获取论文信息（按被引量）
+    @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE title LIKE #{title} ORDER BY cite_times DESC , id ASC limit #{currIndex} ," + pageSize )
+    @Results(
+            Result(property = "id",column = "id"),
+            Result(property = "title",column = "title"),
+            Result(property = "author",column = "author"),
+            Result(property = "cite_times",column = "cite_times"),
+            Result(property = "click_times",column = "click_times"),
+            Result(property = "publish_time",column = "publish_time"),
+            Result(property = "abstract",column = "abstract")
+    )
+    fun findPaperByTitle_cite_times(title: String,currIndex: Int): List<Paper>
+
+    //根据题目获取论文信息（按时间）
+    @Select("SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE title LIKE #{title} ORDER BY publish_time DESC , id ASC limit #{currIndex} ," + pageSize )
+    @Results(
+            Result(property = "id",column = "id"),
+            Result(property = "title",column = "title"),
+            Result(property = "author",column = "author"),
+            Result(property = "cite_times",column = "cite_times"),
+            Result(property = "click_times",column = "click_times"),
+            Result(property = "publish_time",column = "publish_time"),
+            Result(property = "abstract",column = "abstract")
+    )
+    fun findPaperByTitle_publish_time(title: String,currIndex: Int): List<Paper>
+
+    //根据摘要获取论文信息（按点击量）
+    @Select("(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)) UNION " +
+            "(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE abstract LIKE #{title} or title LIKE #{title})" +
+            "ORDER BY click_times DESC , id ASC limit #{currIndex} ," + pageSize )
+    fun findPaperByAbstract_click_times(abstract: String,title: String,currIndex: Int): List<Paper>
+
+    //根据摘要获取论文信息（按被引量）
+    @Select("(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)) UNION " +
+            "(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE abstract LIKE #{title} or title LIKE #{title})" +
+            "ORDER BY cite_times DESC , id ASC limit #{currIndex} ," + pageSize )
+    fun findPaperByAbstract_cite_times(abstract: String,title: String,currIndex: Int): List<Paper>
+
+    //根据摘要获取论文信息（按时间）
+    @Select("(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper " +
+            "WHERE MATCH (title,abstract) AGAINST (#{abstract} in natural language mode)) UNION " +
+            "(SELECT id,title,author,cite_times,click_times,publish_time,abstract FROM paper WHERE abstract LIKE #{title} or title LIKE #{title})" +
+            "ORDER BY publish_time DESC , id ASC limit #{currIndex} ," + pageSize )
+    fun findPaperByAbstract_publish_time(abstract: String,title: String,currIndex: Int): List<Paper>
 
     //论文点击次数+1
     @Update("UPDATE paper SET click_times = #{p.click_times} + 1 WHERE id = #{p.id}")
@@ -114,8 +187,22 @@ interface PatentMapper:BaseMapper<Patent>{
     )
     fun findPatentByID(id: Long): Patent
 
-    //根据作者获取专利信息
-    @Select("SELECT * FROM patent WHERE title LIKE #{title}")
+    //专家查看个人专利列表
+    @Select("select patent.id as pid,title,application_date,publication_date,inventor_id,applicant_id from patent,expert " +
+            "where patent.applicant_id = expert.id and applicant_id = #{uid} " +
+            "ORDER BY publication_date DESC , patent.id ASC limit #{currIndex} ," + pageSize )
+    @Results(
+            Result(property = "id",column = "pid"),
+            Result(property = "title",column = "title"),
+            Result(property = "application_date",column = "application_date"),
+            Result(property = "publication_date",column = "publication_date"),
+            Result(property = "inventor_id",column = "inventor_id"),
+            Result(property = "applicant_id",column = "applicant_id")
+    )
+    fun viewingPersonalPatents(uid: Long,currIndex: Int): List<Patent>
+
+    //根据题目获取专利信息
+    @Select("SELECT * FROM patent WHERE title LIKE #{title} limit #{currIndex} ," + pageSize)
     @Results(
             Result(property = "id",column = "id"),
             Result(property = "title",column = "title"),
@@ -124,7 +211,7 @@ interface PatentMapper:BaseMapper<Patent>{
             Result(property = "inventor_id",column = "inventor_id"),
             Result(property = "applicant_id",column = "applicant_id")
     )
-    fun findPatentByTitle(title: String): List<Patent>
+    fun findPatentByTitle(title: String,currIndex: Int): List<Patent>
 
     //查询最大值
     @Select("SELECT MAX(id) FROM patent")
