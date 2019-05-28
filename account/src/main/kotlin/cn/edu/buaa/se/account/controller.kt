@@ -1,9 +1,6 @@
 package cn.edu.buaa.se.account
 
-import io.swagger.annotations.ApiImplicitParam
-import io.swagger.annotations.ApiImplicitParams
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiParam
+import io.swagger.annotations.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,6 +21,7 @@ class UsersController {
     lateinit var followService: FollowService
 
 
+    @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户的信息")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/")
     fun user(): ResponseBody<RpUser> {
@@ -35,6 +33,12 @@ class UsersController {
     @ApiImplicitParams(
         ApiImplicitParam(name="password",value = "当前密码",dataType = "String"),
         ApiImplicitParam(name = "newpassword",value = "新密码",dataType = "String")
+    )
+    @ApiResponses(
+            ApiResponse(code=20000,message = "success"),
+            ApiResponse(code = 40102,message = "不存在的用户"),
+            ApiResponse(code=40103,message = "密码错误"),
+            ApiResponse(code=40104,message = "新旧密码不能相同")
     )
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/password/change")
@@ -55,6 +59,10 @@ class UsersController {
             ApiImplicitParam(name = "password",value = "密码",dataType = "String"),
             ApiImplicitParam(name = "email",value = "邮箱",dataType = "String")
     )
+    @ApiResponses(
+            ApiResponse(code=20000,message = "success"),
+            ApiResponse(code = 40101,message = "用户名已存在")
+    )
     @PostMapping("/register")
     fun register(@RequestBody rqNewUser: RqNewUser): ResponseBody<Nothing?> {
         val rdata: Int
@@ -68,6 +76,10 @@ class UsersController {
 
     @ApiOperation(value = "修改邮箱",notes = "修改邮箱")
     @ApiImplicitParam(name = "email",value = "邮箱",dataType = "String")
+    @ApiResponses(
+            ApiResponse(code=20000,message = "success"),
+            ApiResponse(code = 40102,message = "不存在的用户")
+            )
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/email/change")
     fun changeEmail(@RequestBody rpUser: RpUser): ResponseBody<Nothing?> {
@@ -78,6 +90,10 @@ class UsersController {
 
     @ApiOperation(value = "购买积分",notes = "增加购买的积分")
     @ApiImplicitParam(name = "credit",value = "增加的积分数",dataType = "Int")
+    @ApiResponses(
+            ApiResponse(code=20000,message = "success"),
+            ApiResponse(code = 40102,message = "不存在的用户")
+    )
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/credit/purchase")
     fun purchaseCredits(@RequestBody rpUser: RpUser): ResponseBody<Nothing?> {
@@ -88,6 +104,7 @@ class UsersController {
 
     @ApiOperation(value = "关注专家",notes = "关注一个专家")
     @ApiImplicitParam(name = "followed",value = "要关注的专家",dataType = "Long")
+    @ApiResponse(code=20000,message = "success")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/follow")
     fun follow(@RequestBody rpExpert: RpExpert):ResponseBody<Nothing?>{
@@ -111,6 +128,7 @@ class ExpertController {
     @Autowired
     lateinit var expertService: ExpertService
 
+    @ApiOperation(value="获取专家信息",notes = "获取当前登录专家的信息")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @GetMapping("/")
     fun expert(): ResponseBody<Expert> {
@@ -121,6 +139,11 @@ class ExpertController {
 //    @GetMapping("/{username}")
 //    fun expert(@PathVariable username: String): ResponseBody<Expert> = ResponseBody<Expert>(msg = "", data = expertService.info(username))
 
+    @ApiOperation(value = "获取专家信息",notes = "通过用户id获取专家的信息")
+    @ApiResponses(
+            ApiResponse(code=20000,message = "success"),
+            ApiResponse(code = 40105,message = "不存在的专家")
+    )
     @GetMapping("/{uid}")
     fun expert(@PathVariable uid: Long): ResponseBody<Expert>{
         var rdata:Int=ErrorCode.SUCCESS.code
@@ -131,6 +154,7 @@ class ExpertController {
 
     @ApiOperation(value = "修改专业",notes = "修改专业")
     @ApiImplicitParam(name = "subject",value = "专业",dataType = "String")
+    @ApiResponse(code=20000,message = "success")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/subject/update")
     fun updateSubject(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
@@ -146,6 +170,7 @@ class ExpertController {
 
     @ApiOperation(value = "修改学历",notes = "修改学历")
     @ApiImplicitParam(name = "education",value = "学历",dataType = "String")
+    @ApiResponse(code=20000,message = "success")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/education/update")
     fun updateEducation(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {
@@ -160,6 +185,7 @@ class ExpertController {
 
     @ApiOperation(value = "修改个人介绍",notes = "修改个人介绍")
     @ApiImplicitParam(name = "introduction",value = "个人介绍",dataType = "String")
+    @ApiResponse(code=20000,message = "success")
     @PreAuthorize("hasAuthority('ROLE_EXPERT')")
     @PostMapping("/introduction/update")
     fun updateIntroduction(@RequestBody rpExpert: RpExpert): ResponseBody<Nothing?> {

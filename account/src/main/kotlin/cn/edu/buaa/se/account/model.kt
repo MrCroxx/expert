@@ -7,10 +7,10 @@ import javax.swing.KeyStroke
 enum class ErrorCode(val code:Int,val msg: String){
     SUCCESS(20000,"success"),
     USER_EXISTS(40101,"用户名已存在"),
-    UNKNOWN_USER(40102,"没有该用户"),
+    UNKNOWN_USER(40102,"不存在的用户"),
     WRONG_PASSWORD(40103,"密码错误"),
     SAME_PASSWORD(40104,"新旧密码不能相同"),
-    UNKNOWN_EXPERT(40105,"未知的专家");
+    UNKNOWN_EXPERT(40105,"不存在的专家");
 
     companion object {
         fun getMsgByCode(code: Int): String = ErrorCode.values().find { it.code == code }?.msg ?:"unknown error"
