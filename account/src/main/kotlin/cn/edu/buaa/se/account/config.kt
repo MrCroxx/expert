@@ -49,7 +49,8 @@ class OAuth2ResourceServerConfig: ResourceServerConfigurerAdapter(){
                         "/swagger-ui.html",
                         "/swagger-resources/**",
                         "/v2/api-docs",
-                        "/user/register"
+                        "/user/register",
+                        "/expert/{uid}"
                 )
                 .permitAll()
                 .antMatchers(

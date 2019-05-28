@@ -32,6 +32,8 @@ interface ExpertMapper : BaseMapper<Expert> {
     @Select("select * from expert where id=#{id}")
     fun selectById(id: Long): Expert
 
+    @Select("select COUNT(*) from expert where id=#{id}")
+    fun count(id: Long):Int
 
     @Select("SELECT * FROM expert JOIN user ON expert.id=user.id WHERE user.username=#{username}")
     @Results(

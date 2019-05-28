@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.xml.ws.Response
 
 @RestController
 @RefreshScope
@@ -27,7 +28,7 @@ class UsersController {
     @GetMapping("/")
     fun user(): ResponseBody<RpUser> {
         val username: String = SecurityContextHolder.getContext().authentication.name
-        return ResponseBody(msg = "", data = userService.info(username))
+        return ResponseBody(data = userService.info(username))
     }
 
     @ApiOperation(value = "修改用户密码",notes = "修改用户密码")
@@ -43,9 +44,9 @@ class UsersController {
         if (userService.userConfirms(username)) {
             rdata = userService.updatePassword(username, rqPassword.password, rqPassword.newpassword)
         } else {
-            rdata = UNKNOWN_USER
+            rdata = ErrorCode.UNKNOWN_USER.code
         }
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata, data = null)
     }
 
     @ApiOperation(value = "注册",notes = "注册新账号")
@@ -60,9 +61,9 @@ class UsersController {
         if (!userService.userConfirms(rqNewUser.username)) {
             rdata = userService.addUser(rqNewUser.username, rqNewUser.password, rqNewUser.email)
         } else {
-            rdata = USER_EXISTS
+            rdata = ErrorCode.USER_EXISTS.code
         }
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata, data = null)
     }
 
     @ApiOperation(value = "修改邮箱",notes = "修改邮箱")
@@ -72,7 +73,7 @@ class UsersController {
     fun changeEmail(@RequestBody rpUser: RpUser): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
         val rdata = userService.updateMail(username, rpUser.email)
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata,  data = null)
     }
 
     @ApiOperation(value = "购买积分",notes = "增加购买的积分")
@@ -82,7 +83,7 @@ class UsersController {
     fun purchaseCredits(@RequestBody rpUser: RpUser): ResponseBody<Nothing?> {
         val username = SecurityContextHolder.getContext().authentication.name
         val rdata = userService.updateCredit(username, rpUser.credit)
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata, data = null)
     }
 
     @ApiOperation(value = "关注专家",notes = "关注一个专家")
@@ -97,7 +98,7 @@ class UsersController {
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
 
         val rdata=followService.followExpert(uid,rpExpert.id, Date())
-        return ResponseBody(rdata,msg = "",data = null)
+        return ResponseBody(rdata,data = null)
     }
 
 }
@@ -114,11 +115,19 @@ class ExpertController {
     @GetMapping("/")
     fun expert(): ResponseBody<Expert> {
         val username = SecurityContextHolder.getContext().authentication.name
-        return ResponseBody<Expert>(msg = "", data = expertService.info(username))
+        return ResponseBody<Expert>(data = expertService.info(username))
     }
 
-    @GetMapping("/{username}")
-    fun expert(@PathVariable username: String): ResponseBody<Expert> = ResponseBody<Expert>(msg = "", data = expertService.info(username))
+//    @GetMapping("/{username}")
+//    fun expert(@PathVariable username: String): ResponseBody<Expert> = ResponseBody<Expert>(msg = "", data = expertService.info(username))
+
+    @GetMapping("/{uid}")
+    fun expert(@PathVariable uid: Long): ResponseBody<Expert>{
+        var rdata:Int=ErrorCode.SUCCESS.code
+        if(!expertService.expertExists(uid))
+            rdata=ErrorCode.UNKNOWN_EXPERT.code
+        return ResponseBody<Expert>(rdata,data = expertService.infoByUid(uid))
+    }
 
     @ApiOperation(value = "修改专业",notes = "修改专业")
     @ApiImplicitParam(name = "subject",value = "专业",dataType = "String")
@@ -132,7 +141,7 @@ class ExpertController {
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
 
         val rdata = expertService.updateSubject(uid, rpExpert.subject)
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata, data = null)
     }
 
     @ApiOperation(value = "修改学历",notes = "修改学历")
@@ -146,7 +155,7 @@ class ExpertController {
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
 
         val rdata = expertService.updateEducation(uid, rpExpert.education)
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata, data = null)
     }
 
     @ApiOperation(value = "修改个人介绍",notes = "修改个人介绍")
@@ -160,6 +169,6 @@ class ExpertController {
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
 
         val rdata = expertService.updateIntroduction(uid, rpExpert.introduction)
-        return ResponseBody(rdata, msg = "", data = null)
+        return ResponseBody(rdata, data = null)
     }
 }

@@ -2,13 +2,20 @@ package cn.edu.buaa.se.account
 
 import org.springframework.format.annotation.DateTimeFormat
 import java.util.*
+import javax.swing.KeyStroke
 
-const val SUCCESS = 0
-const val USER_EXISTS = 11
-const val UNKNOWN_USER = 12
-const val WRONG_PASSWORD = 13
-const val SAME_PASSWORD = 14
-const val UNKNOWN_EXPERT = 21
+enum class ErrorCode(val code:Int,val msg: String){
+    SUCCESS(20000,"success"),
+    USER_EXISTS(40101,"用户名已存在"),
+    UNKNOWN_USER(40102,"没有该用户"),
+    WRONG_PASSWORD(40103,"密码错误"),
+    SAME_PASSWORD(40104,"新旧密码不能相同"),
+    UNKNOWN_EXPERT(40105,"未知的专家");
+
+    companion object {
+        fun getMsgByCode(code: Int): String = ErrorCode.values().find { it.code == code }?.msg ?:"unknown error"
+    }
+}
 
 interface IResponseBody<T> {
     var errcode: Int
@@ -18,8 +25,8 @@ interface IResponseBody<T> {
 }
 
 data class ResponseBody<T>(
-        override var errcode: Int = 0,
-        override var msg: String = "",
+        override var errcode: Int = 20000,
+        override var msg: String = ErrorCode.getMsgByCode(errcode),
         override var date: Date = Date(),
         override var data: T
 ) : IResponseBody<T>
