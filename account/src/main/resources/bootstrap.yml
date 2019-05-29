@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: service-account
+  cloud:
+    config:
+      label: dev
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: service-config
+
+server:
+  port: 12600
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:12300/eureka/
