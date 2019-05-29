@@ -315,7 +315,7 @@ class PatentController {
 @RestController
 @RefreshScope
 @RequestMapping("/papercollection")
-class Paper_collectionController {
+class PaperCollectionController {
 
     @Autowired
     lateinit var paper_collectionService: Paper_collectionService
@@ -346,7 +346,7 @@ class Paper_collectionController {
     @ApiImplicitParams(
             ApiImplicitParam(name = "paper_id", value = "论文id", required = true, dataType = "bigint", paramType = "query")
     )
-    fun deletePapercollection(@PathVariable paper_id: Int): ResponseBody<Nothing?> {
+    fun deletePaperCollection(@PathVariable paper_id: Int): ResponseBody<Nothing?> {
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
