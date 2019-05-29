@@ -2,18 +2,29 @@ package cn.edu.buaa.se.paper_patent
 
 import java.util.*
 
-const val SUCCESS = 0
-const val USER_EXISTS = 11
-const val UNKNOWN_USER = 12
-const val WRONG_PASSWORD = 13
-const val SAME_PASSWORD = 14
-const val UNKNOWN_PAPER = 15
-const val UNKNOWN_PATENT = 16
-const val SAME_PAPERCOLLECTION = 17
-const val SAME_PATENTCOLLECTION = 18
-const val UNKNOWN_PAPERCOLLECTION = 19
-const val UNKNOWN_PATENTCOLLECTION = 20
-const val UNKNOWN_EXPERT = 21
+const val pageSize = 10
+
+const val SUCCESS = 20000
+const val UNKNOWN_PAPER = 40001
+const val UNKNOWN_PATENT = 40002
+const val SAME_PAPERCOLLECTION = 40003
+const val SAME_PATENTCOLLECTION = 40004
+const val UNKNOWN_PAPERCOLLECTION = 40005
+const val UNKNOWN_PATENTCOLLECTION = 40006
+const val UNKNOWN_EXPERT = 40007
+const val SORTTYPE_ERROR = 40008
+
+val Status = mapOf<Int,String>(
+        SUCCESS to "success" ,
+        UNKNOWN_PAPER to "can't find the paper" ,
+        UNKNOWN_PATENT to "can't find the patent" ,
+        SAME_PAPERCOLLECTION to "the paper is already collected" ,
+        SAME_PATENTCOLLECTION to "the patent is already collected" ,
+        UNKNOWN_PAPERCOLLECTION to "can't find the paper collection" ,
+        UNKNOWN_PATENTCOLLECTION to "can't find the patent collection"
+        )
+
+
 
 interface IResponseBody<T> {
     var errcode: Int
@@ -29,13 +40,6 @@ data class ResponseBody<T>(
         override var data: T
 ) : IResponseBody<T>
 
-data class RpUser(
-        var id: Long = 0,
-        var username: String = "",
-        var email: String = "",
-        var credit: Int = 0,
-        var frozen_credit: Int = 0
-)
 
 data class RpPaper(
         var id:Long = -1,

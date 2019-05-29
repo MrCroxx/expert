@@ -27,11 +27,59 @@ class PaperService {
 
     fun findPaperById(id: Long): Paper = paperMapper.findPaperByID(id)
 
-    fun findPaperByAuthor(name: String): List<Paper> = paperMapper.findPaperByAuthor(name)
+    fun viewingPersonalPapers(uid: Long,currIndex:Int): List<Paper> = paperMapper.viewingPersonalPapers(uid,currIndex)
 
-    fun findPaperByTitle(title: String): List<Paper> = paperMapper.findPaperByAuthor(title)
+    fun findPaperByAuthor(name: String, sort:String, page:Int): List<Paper>{
+        var paper: List<Paper>
+        var currIndex:Int = page * pageSize - pageSize
+        if(sort == "click_times"){
+            paper = paperMapper.findPaperByAuthor_click_times(name,currIndex)
+        }else if(sort == "cite_times"){
+            paper = paperMapper.findPaperByAuthor_cite_times(name,currIndex)
+        }else{
+            paper = paperMapper.findPaperByAuthor_publish_time(name,currIndex)
 
-    fun findPaperByAbstract(abstract: String, abstracts: String): List<Paper> = paperMapper.findPaperByAbstract(abstract, abstracts)
+        }
+        var count:Long = paper.count().toLong()
+        for(item in paper){
+            item.count = count
+        }
+        return paper
+    }
+
+    fun findPaperByTitle(title: String, sort:String, page:Int): List<Paper> {
+        var paper: List<Paper>
+        var currIndex:Int = page * pageSize - pageSize
+        if(sort == "click_times"){
+            paper = paperMapper.findPaperByTitle_click_times(title,currIndex)
+        }else if(sort == "cite_times"){
+            paper = paperMapper.findPaperByTitle_cite_times(title,currIndex)
+        }else{
+            paper = paperMapper.findPaperByTitle_cite_times(title,currIndex)
+        }
+        var count:Long = paper.count().toLong()
+        for(item in paper){
+            item.count = count
+        }
+        return paper
+    }
+
+    fun findPaperByAbstract(abstract: String, abstracts: String, sort:String, page:Int): List<Paper>{
+        var paper: List<Paper>
+        var currIndex:Int = page * pageSize - pageSize
+        if(sort == "click_times"){
+            paper = paperMapper.findPaperByAbstract_click_times(abstract, abstracts, currIndex)
+        }else if(sort == "cite_times"){
+            paper = paperMapper.findPaperByAbstract_cite_times(abstract, abstracts, currIndex)
+        }else{
+            paper = paperMapper.findPaperByAbstract_publish_time(abstract, abstracts, currIndex)
+        }
+        var count:Long = paper.count().toLong()
+        for(item in paper){
+            item.count = count
+        }
+        return paper
+    }
 
     fun findpaperIDmax(): Long {
         return paperMapper.findpaperIDmax()
@@ -39,7 +87,7 @@ class PaperService {
 
     fun lookupPaper(id: Long): Int {
         var papers: Paper = paperMapper.findPaperByID(id)
-        if (papers == null) {
+        if (papers == null) { //并不是always 'false',而且经测试，还是会正常返回UNKNOWN_PAPER，下面同理
             return UNKNOWN_PAPER
         } else {
             paperMapper.updateclick_times(papers, id)
@@ -52,12 +100,8 @@ class PaperService {
         return SUCCESS
     }
 
-    fun updatePaper(id: Long, title: String, abstract: String): Int {
+    fun updatePaper(uid:Long, id: Long, title: String, abstract: String): Int {
         var papers: Paper = paperMapper.findPaperByID(id)
-        val authentication = SecurityContextHolder.getContext().authentication
-        val details = authentication.details as OAuth2AuthenticationDetails
-        val decodedDetails = details.decodedDetails as MutableMap<String, *>
-        val uid: Long = (decodedDetails["uid"] as Int).toLong()
         if (papers == null || papers.author != uid) {
             return UNKNOWN_PAPER
         } else {
@@ -67,12 +111,9 @@ class PaperService {
         }
     }
 
-    fun deletePaperById(id: Long): Int {
+    fun deletePaperById(uid:Long, id: Long): Int {
         var papers: Paper = paperMapper.findPaperByID(id)
-        val authentication = SecurityContextHolder.getContext().authentication
-        val details = authentication.details as OAuth2AuthenticationDetails
-        val decodedDetails = details.decodedDetails as MutableMap<String, *>
-        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
         if (papers == null || papers.author != uid) {
             return UNKNOWN_PAPER
         } else {
@@ -93,8 +134,11 @@ class PatentService {
     /*fun findPatentByTitle(title: String): List<Patent> {
         return patentMapper.findPatentByTitle(title)
     }*/
-    fun findPatentByTitle(title: String): List<Patent> = patentMapper.findPatentByTitle(title)
+    fun findPatentById(id: Long): Patent = patentMapper.findPatentByID(id)
 
+    fun viewingPersonalPatents(uid: Long,currIndex:Int): List<Patent> = patentMapper.viewingPersonalPatents(uid,currIndex)
+
+    fun findPatentByTitle(title: String,currIndex: Int): List<Patent> = patentMapper.findPatentByTitle(title,currIndex)
 
     fun lookupPatent(id: Long): Int {
         var patents: Patent = patentMapper.findPatentByID(id)
@@ -114,27 +158,21 @@ class PatentService {
         return SUCCESS
     }
 
-    fun updatePatent(id: Long, title: String): Int {
+    fun updatePatent(uid:Long, id: Long, title: String): Int {
         var patents: Patent = patentMapper.findPatentByID(id)
-        val authentication = SecurityContextHolder.getContext().authentication
-        val details = authentication.details as OAuth2AuthenticationDetails
-        val decodedDetails = details.decodedDetails as MutableMap<String, *>
-        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
         if (patents == null || patents.applicant_id != uid) {
             return UNKNOWN_PATENT
         } else {
-            val p = Patent(id, title, "", "", 0, uid)
+            val p = Patent(id, title, "", Date(), 0, uid)
             patentMapper.updatePatent(p, id)
             return SUCCESS
         }
     }
 
-    fun deletePatentById(id: Long): Int {
+    fun deletePatentById(uid:Long, id: Long): Int {
         var patents: Patent = patentMapper.findPatentByID(id)
-        val authentication = SecurityContextHolder.getContext().authentication
-        val details = authentication.details as OAuth2AuthenticationDetails
-        val decodedDetails = details.decodedDetails as MutableMap<String, *>
-        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+
         if (patents == null || patents.applicant_id != uid) {
             return UNKNOWN_PATENT
         } else {
@@ -153,12 +191,11 @@ class Paper_collectionService {
     lateinit var paper_collectionMapper: Paper_collectionMapper
 
 
-    fun collectionPaper(user_id: Long, paper_id: Long, time: String): Int {
+    fun collectionPaper(user_id: Long, paper_id: Long, time: Date): Int {
         var collection: Paper_collection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
         if (collection != null) {
             return SAME_PAPERCOLLECTION
         }
-        //return userMapper.getUserById(id)
         else {
             val p = Paper_collection(user_id, paper_id, time)
             paper_collectionMapper.insertPaper_collection(p)
@@ -185,7 +222,7 @@ class Patent_collectionService {
     lateinit var patent_collectionMapper: Patent_collectionMapper
 
 
-    fun collectionPatent(user_id: Long, patent_id: Long, time: String): Int {
+    fun collectionPatent(user_id: Long, patent_id: Long, time: Date): Int {
         var collection: Patent_collection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
         if (collection != null) {
             return SAME_PATENTCOLLECTION

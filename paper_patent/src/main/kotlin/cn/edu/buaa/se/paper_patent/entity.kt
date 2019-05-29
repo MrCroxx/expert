@@ -8,23 +8,6 @@ enum class CDN_TYPE constructor(var value: String) {
     PAPER("paper"), PATENT("patent")
 }
 
-data class User(
-        var id: Long = 0,
-        var username: String = "",
-        var password: String = "",
-        var email: String = "",
-        var credit: Int = 0,
-        var frozen_credit: Int = 0,
-        var role: Int = 0
-) {
-    fun toRUser(): RpUser = RpUser(
-            id = id,
-            username = username,
-            email = email,
-            credit = credit,
-            frozen_credit = frozen_credit
-    )
-}
 
 data class Paper(
         var id: Long? = -1,
@@ -36,16 +19,17 @@ data class Paper(
         var click_times: Int = 0,
         var publish_time: Date = Date(),
         var abstract: String = "",
-        var name: String = ""
+        var name: String = "",
+        var count: Long = -1
 ) {
     fun getUrl(): String = "http://${HOST}/${CDN_TYPE.PAPER.value}/${id}"
 }
 
 data class Patent(
-        var id: Long = -1,
+        var id: Long? = -1,
         var title: String = "",
-        var application_date: String = "",
-        var publication_date: String = "",
+        var application_date: String? = "",
+        var publication_date: Date = Date(),
         var inventor_id: Long = 0,
         var applicant_id: Long = 0
 ) {
@@ -55,11 +39,11 @@ data class Patent(
 data class Paper_collection(
         var user_id: Long = -1,
         var paper_id: Long = -1,
-        var time: String = ""
+        var time: Date = Date()
 )
 
 data class Patent_collection(
         var user_id: Long = -1,
         var patent_id: Long = -1,
-        var time: String = ""
+        var time: Date = Date()
 )
