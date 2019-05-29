@@ -32,6 +32,9 @@ interface ExpertMapper : BaseMapper<Expert> {
     @Select("select * from expert where id=#{id}")
     fun selectById(id: Long): Expert
 
+    @Select("select COUNT(*) from expert where id=#{id}")
+    fun count(id: Long):Int
+
     @Select("SELECT * FROM expert JOIN user ON expert.id=user.id WHERE user.username=#{username}")
     @Results(
             Result(property = "id", column = "id"),
@@ -60,3 +63,7 @@ interface OrganizationMapper : BaseMapper<Organization> {
     @Select("SELECT * FROM organization WHERE id=#{id}")
     fun selectById(id: Long): Organization
 }
+
+@Repository
+@Mapper
+interface FollowMapper:BaseMapper<Follow>{}

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UserService {
@@ -16,10 +17,10 @@ class UserService {
     }
 
     fun addUser(username: String, password: String, email: String): Int {
-        var encoder = BCryptPasswordEncoder()
-        var newUser = User(username = username, password = encoder.encode(password.trim()), email = email, role = 1)
+        val encoder = BCryptPasswordEncoder()
+        val newUser = User(username = username, password = encoder.encode(password.trim()), email = email, role = 1)
         userMapper.insert(newUser)
-        return SUCCESS
+        return ErrorCode.SUCCESS.code
     }
 
     fun info(username: String): RpUser = userMapper.selectByUsername(username).toRUser()
@@ -28,7 +29,7 @@ class UserService {
         if (userConfirms(username)) {
             return updatePassword(username, password, newpassword)
         }
-        return UNKNOWN_USER
+        return ErrorCode.UNKNOWN_USER.code
     }
 
     fun updatePassword(username: String, password: String, newpassword: String): Int {
@@ -36,28 +37,28 @@ class UserService {
         val user: User = userMapper.selectByUsername(username)
         if (encoder.matches(password, user.password)) {
             if (encoder.matches(newpassword, user.password)) {
-                return SAME_PASSWORD
+                return ErrorCode.SAME_PASSWORD.code
             }
             userMapper.updatePassword(username, encoder.encode(newpassword).trim())
-            return SUCCESS
+            return ErrorCode.SUCCESS.code
         }
-        return WRONG_PASSWORD
+        return ErrorCode.WRONG_PASSWORD.code
     }
 
     fun updateMail(username: String, email: String): Int {
         if (userConfirms(username)) {
             userMapper.updateEmail(username, email)
-            return SUCCESS
+            return ErrorCode.SUCCESS.code
         }
-        return UNKNOWN_USER
+        return ErrorCode.UNKNOWN_USER.code
     }
 
     fun updateCredit(username: String, credit: Int): Int {
         if (userConfirms(username)) {
             userMapper.updateCredit(username, credit)
-            return SUCCESS
+            return ErrorCode.SUCCESS.code
         }
-        return UNKNOWN_USER
+        return ErrorCode.UNKNOWN_USER.code
     }
 
     fun userConfirms(username: String): Boolean {
@@ -74,7 +75,6 @@ class UserService {
 class ExpertService {
     @Autowired
     lateinit var expertMapper: ExpertMapper;
-    lateinit var userMapper: UserMapper
 
     fun listExperts(): List<Expert>? {
         return expertMapper.selectList(QueryWrapper<Expert>())
@@ -82,36 +82,34 @@ class ExpertService {
 
     fun info(username: String): Expert = expertMapper.selectByUsername(username)
 
-    fun updateInfo(username: String, key: String, value: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            val expert: Expert = expertMapper.selectById(userMapper.selectByUsername(username).id)
-            expertMapper.update(null, UpdateWrapper<Expert>(expert).set(key, value))
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+    fun expertExists(uid:Long):Boolean=expertMapper.count(uid)!=0
+
+    fun infoByUid(uid:Long):Expert=expertMapper.selectById(uid)
+
+    fun updateSubject(id:Long, subject: String): Int {
+        expertMapper.updateSubject(subject, id)
+        return ErrorCode.SUCCESS.code
     }
 
-    fun updateSubject(username: String, subject: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            expertMapper.updateSubject(subject, userMapper.selectByUsername(username).id)
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+    fun updateEducation(id:Long, education: String): Int {
+        expertMapper.updateEducation(education, id)
+        return ErrorCode.SUCCESS.code
     }
 
-    fun updateEducation(username: String, education: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            expertMapper.updateEducation(education, userMapper.selectByUsername(username).id)
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+    fun updateIntroduction(id:Long, introduction: String): Int {
+        expertMapper.updateIntroduction(introduction, id)
+        return ErrorCode.SUCCESS.code
     }
+}
 
-    fun updateIntroduction(username: String, introduction: String): Int {
-        if (userMapper.selectCount(username) == 1) {
-            expertMapper.updateIntroduction(introduction, userMapper.selectByUsername(username).id)
-            return SUCCESS
-        }
-        return UNKNOWN_EXPERT
+@Service
+class FollowService{
+    @Autowired
+    lateinit var followMapper: FollowMapper
+
+    fun followExpert(id:Long,followed:Long,time:Date):Int{
+        val newFollow=Follow(id,followed,time)
+        followMapper.insert(newFollow)
+        return ErrorCode.SUCCESS.code
     }
 }
