@@ -9,6 +9,42 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RefreshScope
+@RequestMapping("/search")
+class SearchController {
+
+    final val PAGE_COUNT = 12
+
+    @Autowired
+    lateinit var searchService: SearchService
+
+
+    @GetMapping("/")
+    fun search(
+            keyword: String,
+            type: String?,
+            sort: String?,
+            year: Int?,
+            limit: Int?
+    ): CResponseBody<SearchResult?> {
+        val eType = DocType.fromString(type ?: "")
+        val eSort = SearchSort.fromString(sort ?: "")
+        val nLimit = limit ?: 120
+        val result = searchService.search(
+                keyword = keyword,
+                type = eType,
+                sort = eSort,
+                year = year,
+                offset = 0,
+                limit = nLimit
+        )
+        return CResponseBody(data = result)
+    }
+
+}
+
+
+@RestController
+@RefreshScope
 @RequestMapping("/paper")
 class PaperController {
 

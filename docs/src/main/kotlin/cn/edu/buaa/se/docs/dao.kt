@@ -34,7 +34,7 @@ interface UserMapper : BaseMapper<User> {
     )
     fun selectById(id: Long): User
 
-    @Select("SELECT * FROM user JOIN user_paper ON user.id=user_paper.user_id WHERE user_paper.paper_id=#{id}")
+    @Select("SELECT * FROM user JOIN author_paper ON user.id=author_paper.author_id WHERE author_paper.paper_id=#{id}")
     @Results(
             Result(property = "id", column = "id"),
             Result(property = "username", column = "username"),
@@ -102,6 +102,41 @@ interface PaperMapper : BaseMapper<Paper> {
             Result(property = "authors", column = "id", many = Many(select = "cn.edu.buaa.se.docs.UserMapper.selectAuthorsByPaperId"))
     )
     fun selectById(id: Long): Paper
+
+    @Select("<script>" +
+            "SELECT * FROM paper " +
+            "WHERE MATCH(`title`,`abstract`) AGAINST(#{keyword}) " +
+            "<if test='year != null'>" +
+            "AND YEAR(`publish_time`)=#{year} " +
+            "</if>" +
+            "ORDER BY " +
+            "<choose>" +
+            "<when test='sort.method==\"date\"'>" +
+            "`publish_time` DESC" +
+            "</when>" +
+            "<when test='sort.method==\"click\"'>" +
+            "`click_times` DESC" +
+            "</when>" +
+            "</choose>" +
+            "LIMIT #{offset},#{limit}" +
+            "</script>")
+    @Results(
+            Result(property = "id", column = "id"),
+            Result(property = "title", column = "title"),
+            Result(property = "paperRec", column = "paper_rec"),
+            Result(property = "dataRec", column = "data_rec"),
+            Result(property = "citeTimes", column = "cite_times"),
+            Result(property = "clickTimes", column = "click_times"),
+            Result(property = "publishTime", column = "publish_time"),
+            Result(property = "abstract", column = "abstract"),
+            Result(property = "keywords", column = "keywords"),
+            Result(property = "label", column = "label"),
+            Result(property = "authors", column = "id", many = Many(select = "cn.edu.buaa.se.docs.UserMapper.selectAuthorsByPaperId"))
+    )
+    fun search(keyword: String, sort: SearchSort, year: Int?, offset: Int, limit: Int): MutableList<Paper>
+
+    @Select("SELECT COUNT(*) FROM `paper`")
+    fun selectCount(): Int
 }
 
 
@@ -118,10 +153,48 @@ interface PatentMapper : BaseMapper<Patent> {
             Result(property = "agent", column = "agent"),
             Result(property = "summary", column = "summary"),
             Result(property = "address", column = "address"),
+            Result(property = "clickTime", column = "click_times"),
             Result(property = "applicationDate", column = "application_date"),
             Result(property = "publicationDate", column = "publication_date"),
             Result(property = "applicants", column = "id", many = Many(select = "cn.edu.buaa.se.docs.UserMapper.selectApplicantsByPatentId")),
             Result(property = "inventors", column = "id", many = Many(select = "cn.edu.buaa.se.docs.UserMapper.selectInventorsByPatentId"))
     )
     fun selectById(id: Long): Patent
+
+    @Select("<script>" +
+            "SELECT * FROM `patent` " +
+            "WHERE MATCH(`title`,`summary`) AGAINST(#{keyword}) " +
+            "<if test='year!= null'>" +
+            "AND YEAR(`public_time`)=#{year} " +
+            "</if>" +
+            "ORDER BY " +
+            "<choose>" +
+            "<when test='sort.method==\"date\"'>" +
+            "`publication_date` DESC" +
+            "</when>" +
+            "<when test='sort.method==\"click\"'>" +
+            "`click_times` DESC" +
+            "</when>" +
+            "</choose>" +
+            "LIMIT #{offset},#{limit}" +
+            "</script>")
+    @Results(
+            Result(property = "id", column = "id"),
+            Result(property = "title", column = "title"),
+            Result(property = "applicationNumber", column = "application_number"),
+            Result(property = "publicationNumber", column = "publication_number"),
+            Result(property = "agency", column = "agency"),
+            Result(property = "agent", column = "agent"),
+            Result(property = "summary", column = "summary"),
+            Result(property = "address", column = "address"),
+            Result(property = "clickTime", column = "click_times"),
+            Result(property = "applicationDate", column = "application_date"),
+            Result(property = "publicationDate", column = "publication_date"),
+            Result(property = "applicants", column = "id", many = Many(select = "cn.edu.buaa.se.docs.UserMapper.selectApplicantsByPatentId")),
+            Result(property = "inventors", column = "id", many = Many(select = "cn.edu.buaa.se.docs.UserMapper.selectInventorsByPatentId"))
+    )
+    fun search(keyword: String, sort: SearchSort, year: Int?, offset: Int, limit: Int): MutableList<Patent>
+
+    @Select("SELECT COUNT(*) FROM `patent`")
+    fun selectCount(): Int
 }
