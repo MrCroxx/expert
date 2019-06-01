@@ -1,4 +1,4 @@
-package cn.edu.buaa.se.account
+package cn.edu.buaa.se.applicationform
 
 import org.mybatis.spring.annotation.MapperScan
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -8,10 +8,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 
 @SpringBootApplication
 @EnableEurekaClient
-@MapperScan("cn/edu/buaa/se/account")
+@MapperScan("cn/edu/buaa/se/applicationform")
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class AccountApplication
+class ApplicationformApplication
+
 
 fun main(args: Array<String>) {
-    runApplication<AccountApplication>(*args)
+    runApplication<ApplicationformApplication>(*args)
 }

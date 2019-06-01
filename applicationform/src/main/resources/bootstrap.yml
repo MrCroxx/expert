@@ -1,6 +1,6 @@
 spring:
   application:
-    name: service-account
+    name: service-applicationform
   cloud:
     config:
       label: dev
@@ -10,7 +10,7 @@ spring:
         service-id: service-config
 
 server:
-  port: 12450
+  port: 12451
 
 eureka:
   client:
