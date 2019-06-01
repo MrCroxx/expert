@@ -26,6 +26,7 @@
         <module>oauth2</module>
         <module>account</module>
         <module>paper_patent</module>
+        <module>docs</module>
         <!-- Test Module -->
         <module>hi</module>
     </modules>

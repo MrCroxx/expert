@@ -1,8 +1,6 @@
 package cn.edu.buaa.se.paper_patent
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -192,19 +190,19 @@ class Paper_collectionService {
 
 
     fun collectionPaper(user_id: Long, paper_id: Long, time: Date): Int {
-        var collection: Paper_collection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
+        var collection: PaperCollection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
         if (collection != null) {
             return SAME_PAPERCOLLECTION
         }
         else {
-            val p = Paper_collection(user_id, paper_id, time)
+            val p = PaperCollection(user_id, paper_id, time)
             paper_collectionMapper.insertPaper_collection(p)
             return SUCCESS
         }
     }
 
     fun deletePaper_collection(user_id: Long, paper_id: Long): Int {
-        var collection: Paper_collection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
+        var collection: PaperCollection = paper_collectionMapper.findPaper_collection(user_id, paper_id)
         if (collection == null) {
             return UNKNOWN_PAPERCOLLECTION
         } else {
@@ -223,18 +221,18 @@ class Patent_collectionService {
 
 
     fun collectionPatent(user_id: Long, patent_id: Long, time: Date): Int {
-        var collection: Patent_collection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
+        var collection: PatentCollection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
         if (collection != null) {
             return SAME_PATENTCOLLECTION
         } else {
-            val p = Patent_collection(user_id, patent_id, time)
+            val p = PatentCollection(user_id, patent_id, time)
             patent_collectionMapper.insertPatent_collection(p)
             return SUCCESS
         }
     }
 
     fun deletePatent_collection(user_id: Long, patent_id: Long): Int {
-        var collection: Patent_collection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
+        var collection: PatentCollection = patent_collectionMapper.findPatent_collection(user_id, patent_id)
         if (collection == null) {
             return UNKNOWN_PATENTCOLLECTION
         } else {

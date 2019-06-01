@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="account" />
         <module name="config" />
+        <module name="docs" />
         <module name="eureka" />
         <module name="gateway" />
         <module name="hi" />
@@ -18,9 +19,9 @@
     <bytecodeTargetLevel>
       <module name="account" target="1.8" />
       <module name="config" target="1.8" />
+      <module name="docs" target="1.8" />
       <module name="eureka" target="1.8" />
       <module name="expert" target="1.8" />
-      <module name="experts" target="1.8" />
       <module name="gateway" target="1.8" />
       <module name="hi" target="1.8" />
       <module name="oauth2" target="1.8" />
@@ -31,6 +32,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="account" options="-parameters" />
       <module name="config" options="-parameters" />
+      <module name="docs" options="-parameters" />
       <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="hi" options="-parameters" />

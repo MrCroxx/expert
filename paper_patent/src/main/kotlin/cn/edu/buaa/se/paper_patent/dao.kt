@@ -1,7 +1,6 @@
 package cn.edu.buaa.se.paper_patent
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper
-import com.rabbitmq.http.client.domain.UserInfo
 import org.apache.ibatis.annotations.*
 import org.springframework.stereotype.Repository
 
@@ -234,7 +233,7 @@ interface PatentMapper:BaseMapper<Patent>{
 
 @Mapper
 @Repository
-interface Paper_collectionMapper:BaseMapper<Paper_collection>{
+interface Paper_collectionMapper:BaseMapper<PaperCollection>{
 
     //查找
     @Select("SELECT * FROM collection_paper WHERE user_id = #{user_id} and paper_id = #{paper_id}")
@@ -243,12 +242,12 @@ interface Paper_collectionMapper:BaseMapper<Paper_collection>{
             Result(property = "paper_id",column = "paper_id"),
             Result(property = "time",column = "time")
     )
-    fun findPaper_collection(user_id: Long,paper_id: Long): Paper_collection
+    fun findPaper_collection(user_id: Long,paper_id: Long): PaperCollection
 
 
     //插入
     @Insert("INSERT INTO collection_paper(user_id, paper_id, time) VALUES (#{p.user_id}, #{p.paper_id}, #{p.time})")
-    fun insertPaper_collection(@Param(value="p") p: Paper_collection)
+    fun insertPaper_collection(@Param(value="p") p: PaperCollection)
 
     //删除收藏信息
     @Delete("DELETE from collection_paper WHERE user_id = #{user_id} and paper_id = #{paper_id}")
@@ -258,7 +257,7 @@ interface Paper_collectionMapper:BaseMapper<Paper_collection>{
 
 @Mapper
 @Repository
-interface Patent_collectionMapper:BaseMapper<Patent_collection>{
+interface Patent_collectionMapper:BaseMapper<PatentCollection>{
 
     //查找
     @Select("SELECT * FROM collection_patent WHERE user_id = #{user_id} and patent_id = #{patent_id}")
@@ -267,12 +266,12 @@ interface Patent_collectionMapper:BaseMapper<Patent_collection>{
             Result(property = "patent_id",column = "patent_id"),
             Result(property = "time",column = "time")
     )
-    fun findPatent_collection(user_id: Long,patent_id: Long): Patent_collection
+    fun findPatent_collection(user_id: Long,patent_id: Long): PatentCollection
 
 
     //插入
     @Insert("INSERT INTO collection_patent(user_id, patent_id, time) VALUES (#{p.user_id}, #{p.patent_id}, #{p.time})")
-    fun insertPatent_collection(@Param(value="p") p: Patent_collection)
+    fun insertPatent_collection(@Param(value="p") p: PatentCollection)
 
     //删除收藏信息
     @Delete("DELETE from collection_patent WHERE user_id = #{user_id} and patent_id = #{patent_id}")
