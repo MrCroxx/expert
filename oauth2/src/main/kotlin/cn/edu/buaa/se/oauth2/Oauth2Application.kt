@@ -17,38 +17,3 @@ class Oauth2Application
 fun main(args: Array<String>) {
     runApplication<Oauth2Application>(*args)
 }
-
-@RestController
-class TestController {
-
-    @Autowired
-    lateinit var userMapper: UserMapper
-    @Autowired
-    lateinit var passwordEncoder: BCryptPasswordEncoder
-
-    @GetMapping("register")
-    fun register(
-            @RequestParam("username") username: String,
-            @RequestParam("password") password: String,
-            @RequestParam("email") email: String,
-            @RequestParam("role") role: Int
-    ): String {
-        val user = User(
-                id = null,
-                _username = username,
-                _password = passwordEncoder.encode(password),
-                role = role,
-                email = email
-        )
-        userMapper.insert(user)
-
-        return "ok"
-    }
-/*
-    @GetMapping("info")
-    fun info(
-            @RequestParam("username") username: String
-    ): User? = userMapper.findByUsername(username)
-
-   */
-}
