@@ -48,6 +48,10 @@ class OAuth2ResourceServerConfig: ResourceServerConfigurerAdapter(){
                         "/v2/api-docs"
                 )
                 .permitAll()
+                .antMatchers(
+                        "/apply/**",
+                        "/examine/**"
+                ).authenticated()
     }
 
     override fun configure(resources: ResourceServerSecurityConfigurer) {
