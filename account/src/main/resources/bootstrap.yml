@@ -10,7 +10,7 @@ spring:
         service-id: service-config
 
 server:
-  port: 12600
+  port: 12450
 
 eureka:
   client:

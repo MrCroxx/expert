@@ -1,7 +1,6 @@
 package cn.edu.buaa.se.account
 
 import java.util.*
-import javax.swing.RootPaneContainer
 
 data class User(
         var id: Long = 0,

@@ -1,7 +1,3 @@
-/**
- * created by lx
- * 2019/5
- */
 package cn.edu.buaa.se.account
 
 import org.mybatis.spring.annotation.MapperScan
