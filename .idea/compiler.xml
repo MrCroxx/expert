@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="account" />
+        <module name="applicationform" />
         <module name="config" />
         <module name="docs" />
         <module name="eureka" />
@@ -18,6 +19,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="account" target="1.8" />
+      <module name="applicationform" target="1.8" />
       <module name="config" target="1.8" />
       <module name="docs" target="1.8" />
       <module name="eureka" target="1.8" />
@@ -31,6 +33,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="account" options="-parameters" />
+      <module name="applicationform" options="-parameters" />
       <module name="config" options="-parameters" />
       <module name="docs" options="-parameters" />
       <module name="eureka" options="-parameters" />
