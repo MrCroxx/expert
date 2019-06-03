@@ -7,6 +7,7 @@ enum class ErrCode constructor(val code: Int) {
     TYPE_ILLEGAL(40001),
     DATA_NOT_EXISTS(40004),
     DATA_INTEGRITY_VIOLATION(40005),
+    LACK_OF_PARAMETERS(40002),
     UNKNOWN(50000);
 
     companion object {

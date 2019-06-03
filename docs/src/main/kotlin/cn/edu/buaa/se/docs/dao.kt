@@ -13,12 +13,16 @@ import java.util.*
 interface ExpertMapper : BaseMapper<Expert> {
     @Select("SELECT * FROM expert WHERE id=#{id}")
     @Results(
-            Result(property = "name", column = "name"),
-            Result(property = "subject", column = "subject"),
-            Result(property = "education", column = "education"),
-            Result(property = "introduction", column = "introduction"),
-            Result(property = "famousValue", column = "famous_value"),
-            Result(property = "organization", column = "organization_id", one = One(select = "cn.edu.buaa.se.docs.OrganizationMapper.selectById"))
+            id = "ExpertMap",
+            value = [
+                Result(property = "name", column = "name"),
+                Result(property = "subject", column = "subject"),
+                Result(property = "education", column = "education"),
+                Result(property = "introduction", column = "introduction"),
+                Result(property = "field", column = "field"),
+                Result(property = "famousValue", column = "famous_value"),
+                Result(property = "organization", column = "organization_id", one = One(select = "cn.edu.buaa.se.docs.OrganizationMapper.selectById"))
+            ]
     )
     @Throws(DataRetrievalFailureException::class)
     fun selectById(id: Long): Expert?
@@ -54,6 +58,18 @@ interface UserMapper : BaseMapper<User> {
     @Select("SELECT * FROM user JOIN inventor_patent ON user.id=inventor_patent.inventor_id WHERE inventor_patent.patent_id=#{id}")
     @ResultMap("UserMap")
     fun selectInventorsByPatentId(id: Long): MutableList<User>
+
+    @Select("SELECT * FROM user JOIN follow ON user.id=follow.followed_id WHERE user.id=#{id} ORDERED BY time DESC")
+    @ResultMap("UserMap")
+    fun selectFollowedByFollwerId(id: Long): MutableList<User>
+
+    @Insert("INSERT INTO follow(follower_id,followed_id,time) VALUES(#{follower_id},#{followed_id},#{time})")
+    @Throws(DataIntegrityViolationException::class)
+    fun insertFollowPair(follower_id: Long, followed_id: Long, time: Date)
+
+    @Delete("DELETE FROM follow WHERE follower_id=#{follower_id} AND followed_id=#{followed_id}")
+    fun deleteFollowPair(follower_id: Long, followed_id: Long): Int
+
 }
 
 @Mapper
@@ -128,6 +144,9 @@ interface PaperMapper : BaseMapper<Paper> {
 
     @Delete("DELETE FROM collection_paper WHERE user_id=#{user_id} AND paper_id=#{paper_id}")
     fun deletePaperCollection(user_id: Long, paper_id: Long): Int
+
+    @Update("UPDATE paper SET click_time=click_time+1 WHERE id=#{id}")
+    fun updatePaperClickTime(id: Long)
 }
 
 
@@ -196,4 +215,7 @@ interface PatentMapper : BaseMapper<Patent> {
 
     @Delete("DELETE FROM collection_patent WHERE user_id=#{user_id} AND patent_id=#{patent_id}")
     fun deletePatentCollection(user_id: Long, patent_id: Long): Int
+
+    @Update("UPDATE patent SET click_time=click_time+1 WHERE id=#{id}")
+    fun updatePatentClickTime(id: Long)
 }

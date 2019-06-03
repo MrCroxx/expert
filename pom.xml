@@ -26,7 +26,8 @@
         <module>oauth2</module>
         <module>account</module>
         <module>docs</module>
-        <module>applicationform</module>    </modules>
+        <module>applicationform</module>
+    </modules>
 
 
     <properties>

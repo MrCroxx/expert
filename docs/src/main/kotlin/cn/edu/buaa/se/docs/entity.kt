@@ -81,6 +81,7 @@ data class Expert(
         var subject: String = "",
         var education: String = "",
         var introduction: String = "",
+        var field: String = "",
         var famousValue: Double = 0.0,
         var organization: Organization? = null,
         var papers: MutableList<Paper> = mutableListOf(),

@@ -68,7 +68,10 @@ class PaperService {
     @Autowired
     lateinit var paperMapper: PaperMapper
 
-    fun getPaperById(id: Long): Paper? = paperMapper.selectById(id)
+    fun getPaperById(id: Long): Paper? {
+        paperMapper.updatePaperClickTime(id)
+        return paperMapper.selectById(id)
+    }
 
 }
 
@@ -78,7 +81,10 @@ class PatentService {
     @Autowired
     lateinit var patentMapper: PatentMapper
 
-    fun getPatentById(id: Long): Patent? = patentMapper.selectById(id)
+    fun getPatentById(id: Long): Patent? {
+        patentMapper.updatePatentClickTime(id)
+        return patentMapper.selectById(id)
+    }
 
 }
 
@@ -110,6 +116,31 @@ class CollectionService {
             DocType.PAPER -> paperMapper.deletePaperCollection(uid, cid)
             DocType.PATENT -> patentMapper.deletePatentCollection(uid, cid)
         }
+        return when (affectRows) {
+            0 -> ErrCode.DATA_NOT_EXISTS
+            else -> ErrCode.SUCCESS
+        }
+    }
+}
+
+@Service
+class FollowService {
+    @Autowired
+    lateinit var userMapper: UserMapper
+
+    fun getFollows(id: Long) = userMapper.selectFollowedByFollwerId(id)
+
+    fun insertFollow(follower_id: Long, followed_id: Long): ErrCode {
+        try {
+            userMapper.insertFollowPair(follower_id, followed_id, Date())
+        } catch (e: DataIntegrityViolationException) {
+            return ErrCode.DATA_INTEGRITY_VIOLATION
+        }
+        return ErrCode.SUCCESS
+    }
+
+    fun deleteFollow(follower_id: Long, followed_id: Long): ErrCode {
+        val affectRows: Int = userMapper.deleteFollowPair(follower_id, followed_id)
         return when (affectRows) {
             0 -> ErrCode.DATA_NOT_EXISTS
             else -> ErrCode.SUCCESS

@@ -21,7 +21,8 @@ class SearchController {
 
     @ApiOperation(value = "查询论文/专利", notes = "查询论文/专利")
     @ApiResponses(
-            ApiResponse(code = 20000, message = "success")
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "缺少必要的參數")
     )
     @ApiImplicitParams(
             ApiImplicitParam(name = "keyword", value = "搜索关键词", dataType = "String", required = true),
@@ -32,12 +33,14 @@ class SearchController {
     )
     @GetMapping("")
     fun search(
-            keyword: String,
+            keyword: String?,
             type: String?,
             sort: String?,
             year: Int?,
             limit: Int?
     ): CResponseBody<SearchResult?> {
+        keyword
+                ?: return CResponseBody(errcode = ErrCode.LACK_OF_PARAMETERS.code, msg = ErrCode.LACK_OF_PARAMETERS.name, data = null)
         val eType = DocType.fromString(type ?: "")
         val eSort = SearchSort.fromString(sort ?: "")
         val nLimit = limit ?: PAGE_COUNT * 10
@@ -118,7 +121,7 @@ class CollectionController {
             ApiResponse(code = 20000, message = "success")
     )
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("")
+    @GetMapping("/")
     fun collections(): CResponseBody<Collections> {
         val authentication = SecurityContextHolder.getContext().authentication
         val details = authentication.details as OAuth2AuthenticationDetails
@@ -172,6 +175,68 @@ class CollectionController {
             "patent" -> collectionService.deleteCollection(uid, id.toLong(), DocType.PATENT)
             else -> ErrCode.TYPE_ILLEGAL
         }
+        return CResponseBody<Nothing?>(errcode = res.code, msg = res.name, data = null)
+    }
+}
+
+
+@RestController
+@RefreshScope
+@RequestMapping("/follow")
+class FollowController {
+
+    @Autowired
+    lateinit var followService: FollowService
+
+    @ApiOperation(value = "获取关注", notes = "获取关注的用户列表")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/")
+    fun follows(): CResponseBody<MutableList<User>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        return CResponseBody(data = followService.getFollows(uid))
+    }
+
+    @ApiOperation(value = "关注用户", notes = "关注用户")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40005, message = "数据库完整性/一致性约束异常,包括重复关注或关注用户id不存在两种情况")
+    )
+    @ApiImplicitParams(
+            ApiImplicitParam(name = "id", value = "被关注用户id", dataType = "Long", required = true, paramType = "PathVariable")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/{id}")
+    fun addCollection(@PathVariable id: Int): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val res = followService.insertFollow(uid, id.toLong())
+        return CResponseBody<Nothing?>(errcode = res.code, msg = res.name, data = null)
+    }
+
+    @ApiOperation(value = "取消关注用户", notes = "取消关注用户")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40004, message = "数据不存在")
+    )
+    @ApiImplicitParams(
+            ApiImplicitParam(name = "id", value = "被关注用户id", dataType = "Long", required = true, paramType = "PathVariable")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("/{id}")
+    fun deleteCollection(@PathVariable id: Int): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val res = followService.deleteFollow(uid, id.toLong())
         return CResponseBody<Nothing?>(errcode = res.code, msg = res.name, data = null)
     }
 }

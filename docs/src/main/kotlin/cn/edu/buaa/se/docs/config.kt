@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 import org.springframework.stereotype.Component
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
@@ -118,6 +120,7 @@ class FeignOauth2RequestInterceptor : RequestInterceptor {
         }
     }
 }
+
 
 @Configuration
 @EnableSwagger2
