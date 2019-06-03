@@ -1,7 +1,23 @@
 package cn.edu.buaa.se.docs
 
+import io.swagger.annotations.ApiModel
 import java.util.*
 
+enum class DocType constructor(val type: String) {
+    PAPER("paper"),
+    PATENT("patent");
+
+    companion object {
+        fun fromString(tyoe: String): DocType = DocType.values().find { it.type == tyoe } ?: PAPER
+    }
+}
+
+interface Doc {
+    val type: String
+}
+
+
+@ApiModel
 data class Paper(
         var id: Long? = -1,
         var title: String = "",
@@ -14,8 +30,12 @@ data class Paper(
         var keywords: String = "",
         var label: String = "",
         var authors: MutableList<User> = mutableListOf()
-)
+) : Doc {
+    override val type: String
+        get() = DocType.PAPER.name
+}
 
+@ApiModel
 data class Patent(
         var id: Long? = -1,
         var title: String = "",
@@ -25,11 +45,26 @@ data class Patent(
         var agent: String = "",
         var summary: String = "",
         var address: String = "",
+        var clickTimes: Int = 0,
         var applicationDate: Date = Date(),
         var publicationDate: Date = Date(),
         var applicants: MutableList<User> = mutableListOf(),
         var inventors: MutableList<User> = mutableListOf()
-)
+) : Doc {
+    override val type: String
+        get() = DocType.PATENT.name
+}
+
+enum class ROLE constructor(var value: Int) {
+    ROLE_KNOWN(0),
+    ROLE_USER(1),
+    ROLE_EXPERT(2),
+    ROLE_ADMIN(3);
+
+    companion object {
+        fun fromInt(roleId: Int): ROLE = ROLE.values().find { it.value == roleId } ?: ROLE.ROLE_KNOWN
+    }
+}
 
 data class User(
         var id: Long = -1,
@@ -49,7 +84,8 @@ data class Expert(
         var famousValue: Double = 0.0,
         var organization: Organization? = null,
         var papers: MutableList<Paper> = mutableListOf(),
-        var patents: MutableList<Paper> = mutableListOf()
+        var patents_applicant: MutableList<Patent> = mutableListOf(),
+        var patents_inventor: MutableList<Patent> = mutableListOf()
 )
 
 

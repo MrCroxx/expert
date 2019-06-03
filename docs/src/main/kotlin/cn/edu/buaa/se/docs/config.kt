@@ -53,8 +53,12 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
                         "/paper/**",
                         "/patent/**",
                         "/paper_collection/**",
-                        "/patent_collection/**"
+                        "/patent_collection/**",
+                        "/collection/**"
                 ).authenticated()
+                .antMatchers(
+                        "/search"
+                ).permitAll()
     }
 
     override fun configure(resources: ResourceServerSecurityConfigurer) {

@@ -25,12 +25,8 @@
         <module>config</module>
         <module>oauth2</module>
         <module>account</module>
-        <module>paper_patent</module>
         <module>docs</module>
-        <module>applicationform</module>
-        <!-- Test Module -->
-        <module>hi</module>
-    </modules>
+        <module>applicationform</module>    </modules>
 
 
     <properties>

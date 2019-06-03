@@ -9,9 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/eureka/eureka.iml" filepath="$PROJECT_DIR$/eureka/eureka.iml" />
       <module fileurl="file://$PROJECT_DIR$/expert.iml" filepath="$PROJECT_DIR$/expert.iml" />
       <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hi/hi.iml" filepath="$PROJECT_DIR$/hi/hi.iml" />
       <module fileurl="file://$PROJECT_DIR$/oauth2/oauth2.iml" filepath="$PROJECT_DIR$/oauth2/oauth2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/paper_patent/paper_patent.iml" filepath="$PROJECT_DIR$/paper_patent/paper_patent.iml" />
     </modules>
   </component>
 </project>

@@ -12,9 +12,7 @@
         <module name="docs" />
         <module name="eureka" />
         <module name="gateway" />
-        <module name="hi" />
         <module name="oauth2" />
-        <module name="paper_patent" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
