@@ -55,6 +55,17 @@ data class Patent(
         get() = DocType.PATENT.name
 }
 
+enum class ROLE constructor(var value: Int) {
+    ROLE_KNOWN(0),
+    ROLE_USER(1),
+    ROLE_EXPERT(2),
+    ROLE_ADMIN(3);
+
+    companion object {
+        fun fromInt(roleId: Int): ROLE = ROLE.values().find { it.value == roleId } ?: ROLE.ROLE_KNOWN
+    }
+}
+
 data class User(
         var id: Long = -1,
         var username: String = "",
@@ -73,7 +84,8 @@ data class Expert(
         var famousValue: Double = 0.0,
         var organization: Organization? = null,
         var papers: MutableList<Paper> = mutableListOf(),
-        var patents: MutableList<Paper> = mutableListOf()
+        var patents_applicant: MutableList<Patent> = mutableListOf(),
+        var patents_inventor: MutableList<Patent> = mutableListOf()
 )
 
 
