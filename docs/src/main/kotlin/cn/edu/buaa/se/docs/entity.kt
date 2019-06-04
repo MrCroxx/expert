@@ -19,7 +19,7 @@ interface Doc {
 
 @ApiModel
 data class Paper(
-        var id: Long? = -1,
+        var id: Long = -1,
         var title: String = "",
         var paperRec: String = "",
         var dataRec: String = "",
@@ -37,7 +37,7 @@ data class Paper(
 
 @ApiModel
 data class Patent(
-        var id: Long? = -1,
+        var id: Long = -1,
         var title: String = "",
         var applicationNumber: String = "",
         var publicationNumber: String = "",

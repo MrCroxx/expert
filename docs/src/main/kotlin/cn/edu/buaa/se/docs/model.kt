@@ -62,7 +62,23 @@ data class RqUpdateExpertInfo(
         val organizationName: String
 )
 
-data class RqFindUnclaimedUser(
-        val name: String,
-        val NOTHING: Nothing?
+data class RqNewPaper(
+        var title: String,
+        var paperRec: String,
+        var dataRec: String,
+        var publishTime: Date,
+        var abstract: String,
+        var keywords: String
+)
+
+data class RqNewPatent(
+        var title: String,
+        var applicationNumber: String,
+        var publicationNumber: String,
+        var agency: String,
+        var agent: String,
+        var summary: String,
+        var address: String,
+        var applicationDate: Date,
+        var publicationDate: Date
 )

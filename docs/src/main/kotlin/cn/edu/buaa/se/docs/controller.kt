@@ -79,6 +79,76 @@ class PaperController {
                 ?: return CResponseBody(errcode = ErrCode.DATA_NOT_EXISTS.code, msg = ErrCode.DATA_NOT_EXISTS.name, data = null)
         return CResponseBody(data = result)
     }
+
+    @ApiOperation(value = "获取热榜论文", notes = "获取热榜论文")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @GetMapping("/hot")
+    fun hotPapers(): CResponseBody<MutableList<Paper>> = CResponseBody(data = paperService.getHotPapers())
+
+    @ApiOperation(value = "获取推荐论文", notes = "根据用户id获取推荐论文")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/recommend")
+    fun recommend(): CResponseBody<MutableList<Paper>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        return CResponseBody(data = paperService.getRecommendPapers(uid))
+    }
+
+    @ApiOperation(value = "添加论文", notes = "添加论文")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "缺少必要的参数")
+    )
+    @PreAuthorize("hasRole('ROLE_EXPERT')")
+    @PutMapping("/")
+    fun newPaper(@RequestBody rqNewPaper: RqNewPaper): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = paperService.insertPaper(uid = uid, title = rqNewPaper.title, paperRec = rqNewPaper.paperRec, dataRec = rqNewPaper.dataRec, publishTime = rqNewPaper.publishTime, abstract = rqNewPaper.abstract, keywords = rqNewPaper.keywords)
+        return CResponseBody(errcode = result.code, msg = result.name, data = null)
+    }
+
+    @ApiOperation(value = "删除论文", notes = "删除添加论文")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40004, message = "论文不存在")
+    )
+    @PreAuthorize("hasRole('ROLE_EXPERT')")
+    @DeleteMapping("/{id}")
+    fun deletePaper(@PathVariable id: Int): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = paperService.deletePaper(uid, id.toLong())
+        return CResponseBody(errcode = result.code, msg = result.name, data = null)
+    }
+
+    @ApiOperation(value = "查询论文是否关注", notes = "查询论文是否关注")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/{id}/collected")
+    fun queryCollected(@PathVariable id: Int): CResponseBody<Boolean> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = paperService.queryCollected(uid, id.toLong())
+        return CResponseBody(data = result)
+    }
+
+
 }
 
 
@@ -102,6 +172,53 @@ class PatentController {
     fun patent(@PathVariable id: Int): CResponseBody<Patent?> {
         val result = patentService.getPatentById(id.toLong())
                 ?: return CResponseBody(errcode = ErrCode.DATA_NOT_EXISTS.code, msg = ErrCode.DATA_NOT_EXISTS.name, data = null)
+        return CResponseBody(data = result)
+    }
+
+    @ApiOperation(value = "添加专利", notes = "添加专利")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "缺少必要的参数")
+    )
+    @PreAuthorize("hasRole('ROLE_EXPERT')")
+    @PutMapping("/")
+    fun newPatent(@RequestBody rqNewPatent: RqNewPatent): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = patentService.insertPatent(uid = uid, title = rqNewPatent.title, applicationNumber = rqNewPatent.applicationNumber, publicationNumber = rqNewPatent.publicationNumber, agency = rqNewPatent.agency, agent = rqNewPatent.agent, summary = rqNewPatent.summary, address = rqNewPatent.address, applicationDate = rqNewPatent.applicationDate, publicationDate = rqNewPatent.publicationDate)
+        return CResponseBody(errcode = result.code, msg = result.name, data = null)
+    }
+
+    @ApiOperation(value = "删除专利", notes = "删除添专利")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40004, message = "专利不存在")
+    )
+    @PreAuthorize("hasRole('ROLE_EXPERT')")
+    @DeleteMapping("/{id}")
+    fun deletePatent(@PathVariable id: Int): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = patentService.deletePatent(uid, id.toLong())
+        return CResponseBody(errcode = result.code, msg = result.name, data = null)
+    }
+
+    @ApiOperation(value = "查询专利是否关注", notes = "查询专利是否关注")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/{id}/collected")
+    fun queryCollected(@PathVariable id: Int): CResponseBody<Boolean> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = patentService.queryCollected(uid, id.toLong())
         return CResponseBody(data = result)
     }
 }
@@ -237,6 +354,7 @@ class FollowController {
         val res = followService.deleteFollow(uid, id.toLong())
         return CResponseBody<Nothing?>(errcode = res.code, msg = res.name, data = null)
     }
+
 }
 
 @RestController
@@ -329,6 +447,22 @@ class UserController {
         return CResponseBody(errcode = result.code, msg = result.name, data = userService.getUserInfoById(uid))
     }
 
+
+    @ApiOperation(value = "查询用户是否被关注", notes = "查询用户是否被关注")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/{id}/followed")
+    fun queryFollowed(@PathVariable id: Int): CResponseBody<Boolean> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = userService.selectFollowed(uid, id.toLong())
+        return CResponseBody(data = result)
+    }
+
     @ApiOperation(value = "查找未被认领的用户及相关信息", notes = "根据用户名查找未被认领的用户及相关信息")
     @ApiResponses(
             ApiResponse(code = 20000, message = "success"),
@@ -339,5 +473,15 @@ class UserController {
     )
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/unclaimed")
-    fun findUnclaimedUser(@RequestBody rqFindUnclaimedUser: RqFindUnclaimedUser): CResponseBody<User?> = CResponseBody(errcode = ErrCode.SUCCESS.code, msg = ErrCode.SUCCESS.name, data = userService.findUnchaimedUserByExpertName(rqFindUnclaimedUser.name))
+    fun findUnclaimedUser(name: String): CResponseBody<User?> = CResponseBody(errcode = ErrCode.SUCCESS.code, msg = ErrCode.SUCCESS.name, data = userService.findUnchaimedUserByExpertName(name))
+
+    @ApiOperation(value = "查询关联专家", notes = "根据用户id查询关联专家")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @ApiImplicitParams(
+            ApiImplicitParam(name = "id", value = "需查询关联专家的专家id", dataType = "Long", required = true)
+    )
+    @GetMapping("/related/{id}")
+    fun findRelatedUsers(@PathVariable id: Int): CResponseBody<MutableList<User>> = CResponseBody(data = userService.getRelatedUsers(id.toLong()))
 }

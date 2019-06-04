@@ -1,5 +1,6 @@
 package cn.edu.buaa.se.docs
 
+import org.apache.commons.lang.mutable.Mutable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
@@ -92,6 +93,10 @@ class UserService {
             else -> ErrCode.SUCCESS
         }
     }
+
+    fun getRelatedUsers(id: Long): MutableList<User> = userMapper.selectRelatedUsers(id)
+
+    fun selectFollowed(followerId: Long, followedId: Long): Boolean = userMapper.selectFollowed(followerId, followerId) > 0
 }
 
 @Service
@@ -103,6 +108,21 @@ class PaperService {
         paperMapper.updatePaperClickTime(id)
         return paperMapper.selectById(id)
     }
+
+    fun getHotPapers(): MutableList<Paper> = paperMapper.selectHotPapers()
+
+    fun getRecommendPapers(id: Long): MutableList<Paper> = paperMapper.selectRecommendPapersByUserId(id)
+
+    fun insertPaper(uid: Long, title: String, paperRec: String, dataRec: String, publishTime: Date, abstract: String, keywords: String): ErrCode {
+        val newPaper = Paper(title = title, paperRec = paperRec, dataRec = dataRec, publishTime = publishTime, abstract = abstract, keywords = keywords)
+        paperMapper.insertPaper(newPaper)
+        paperMapper.insertPaperAuthor(uid, newPaper.id)
+        return ErrCode.SUCCESS
+    }
+
+    fun deletePaper(uid: Long, paperId: Long): ErrCode = if (paperMapper.deletePaperAuthor(uid, paperId) > 0) ErrCode.SUCCESS else ErrCode.DATA_NOT_EXISTS
+
+    fun queryCollected(uid: Long, paperId: Long): Boolean = paperMapper.selectPaperCollected(uid, paperId) > 0
 
 }
 
@@ -116,6 +136,18 @@ class PatentService {
         patentMapper.updatePatentClickTime(id)
         return patentMapper.selectById(id)
     }
+
+    fun insertPatent(uid: Long, title: String, applicationNumber: String, publicationNumber: String, agency: String, agent: String, summary: String, address: String, applicationDate: Date, publicationDate: Date): ErrCode {
+        val newPatent = Patent(title = title, applicationNumber = applicationNumber, publicationNumber = publicationNumber, agency = agency, agent = agent, summary = summary, address = address, applicationDate = applicationDate, publicationDate = publicationDate)
+        patentMapper.insertPatent(newPatent)
+        patentMapper.insertPatentApplicant(uid, newPatent.id)
+        patentMapper.insertPatentInventor(uid, newPatent.id)
+        return ErrCode.SUCCESS
+    }
+
+    fun deletePatent(uid: Long, patentId: Long): ErrCode = if (patentMapper.deletePatentApplicant(uid, patentId) + patentMapper.deletePatentInventor(uid, patentId) > 0) ErrCode.SUCCESS else ErrCode.DATA_NOT_EXISTS
+
+    fun queryCollected(uid: Long, patent: Long): Boolean = patentMapper.selectPatentCollected(uid, patent) > 0
 
 }
 
@@ -159,7 +191,7 @@ class FollowService {
     @Autowired
     lateinit var userMapper: UserMapper
 
-    fun getFollows(id: Long) = userMapper.selectFollowedByFollwerId(id)
+    fun getFollows(id: Long) = userMapper.selectFollowedByFollowerId(id)
 
     fun insertFollow(follower_id: Long, followed_id: Long): ErrCode {
         try {

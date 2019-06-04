@@ -58,19 +58,24 @@ class OAuth2ResourceServerConfig : ResourceServerConfigurerAdapter() {
                         "/resources/**",
                         "/swagger-ui.html",
                         "/swagger-resources/**",
-                        "/v2/api-docs",
-                        "/user/register")
+                        "/v2/api-docs")
                 .permitAll()
+                .antMatchers(
+                        "/search",
+                        "/paper/hot",
+                        "/user/{id}",
+                        "/user/unclaimed",
+                        "/user/related"
+                ).permitAll()
                 .antMatchers(
                         "/paper/**",
                         "/patent/**",
                         "/paper_collection/**",
                         "/patent_collection/**",
-                        "/collection/**"
+                        "/collection/**",
+                        "/follow/**"
                 ).authenticated()
-                .antMatchers(
-                        "/search"
-                ).permitAll()
+
     }
 
     override fun configure(resources: ResourceServerSecurityConfigurer) {
