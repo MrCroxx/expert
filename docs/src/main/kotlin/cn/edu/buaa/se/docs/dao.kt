@@ -30,6 +30,8 @@ interface ExpertMapper : BaseMapper<Expert> {
     @Update("UPDATE expert SET name=#{name}, subject=#{subject}, education=#{education}, introduction=#{introduction}, field=#{field}, organization_id=#{organizationId} WHERE id=#{id}")
     fun updateExpertInfo(id: Long, name: String, subject: String, education: String, introduction: String, field: String, organizationId: Long): Int
 
+    @Insert("INSERT expert(id,name,subject,education,introduction,field,organization_id) VALUES(#{id},#{name},#{subject},#{education},#{introduction},#{field},#{organizationId})")
+    fun insertExpertInfo(id: Long, name: String, subject: String, education: String, introduction: String, field: String, organizationId: Long): Int
 
 }
 
@@ -109,6 +111,9 @@ interface UserMapper : BaseMapper<User> {
     )
     @ResultMap("UserMap")
     fun selectRelatedUsers(id: Long): MutableList<User>
+
+    @Update("UPDATE user SET role=2 WHERE id=#{id}")
+    fun convertToExpert(id: Long): Int
 
 }
 
@@ -302,4 +307,41 @@ interface PatentMapper : BaseMapper<Patent> {
 
     @Select("SELECT COUNT(*) FROM `collection_patent` WHERE `user_id`=#{user_id} AND `patent_id`=#{patent_id}")
     fun selectPatentCollected(user_id: Long, patent_id: Long): Int
+}
+
+@Repository
+@Mapper
+interface ApplicationMapper : BaseMapper<Application> {
+    @Select("SELECT * FROM application WHERE id=#{id}")
+    @Results(
+            id = "ApplicationMap",
+            value = [
+                Result(property = "id", column = "id"),
+                Result(property = "user", column = "user_id", one = One(select = "cn.edu.buaa.se.docs.UserMapper.selectById")),
+                Result(property = "admin", column = "admin_id", one = One(select = "cn.edu.buaa.se.docs.UserMapper.selectById")),
+                Result(property = "content", column = "content"),
+                Result(property = "applyTime", column = "apply_time"),
+                Result(property = "examineTime", column = "examine_time"),
+                Result(property = "status", column = "status")
+            ]
+    )
+    fun selectById(id: Long): Application
+
+    @Select("SELECT * FROM application WHERE user_id=#{user_id} ORDER BY id DESC")
+    @ResultMap("ApplicationMap")
+    fun selectByUserId(user_id: Long): MutableList<Application>
+
+    @Select("SELECT * FROM application WHERE status=0")
+    @ResultMap("ApplicationMap")
+    fun selectUnhandled(): MutableList<Application>
+
+    @Select("SELECT * FROM application WHERE admin_id=#{admin_id}")
+    @ResultMap("ApplicationMap")
+    fun selectByAdminId(admin_id: Long): MutableList<Application>
+
+    @Insert("INSERT INTO application(user_id,content,apply_time,status) VALUES(#{user_id},#{content},#{apply_time},0)")
+    fun insertApplication(user_id: Long, content: String, apply_time: Date)
+
+    @Update("UPDATE application SET status=#{status}, admin_id=#{admin_id}, examine_time=#{examine_time} WHERE id=#{id}")
+    fun examineApplication(id: Long, status: Int, admin_id: Long, examine_time: Date)
 }

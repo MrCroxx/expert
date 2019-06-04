@@ -82,3 +82,12 @@ data class RqNewPatent(
         var applicationDate: Date,
         var publicationDate: Date
 )
+
+data class ExpertApplication(
+        var name: String = "",
+        var subject: String = "",
+        var education: String = "",
+        var introduction: String = "",
+        var organizationName: String = "",
+        var field: String = ""
+)

@@ -485,3 +485,97 @@ class UserController {
     @GetMapping("/related/{id}")
     fun findRelatedUsers(@PathVariable id: Int): CResponseBody<MutableList<User>> = CResponseBody(data = userService.getRelatedUsers(id.toLong()))
 }
+
+
+@RestController
+@RefreshScope
+@RequestMapping("/application")
+class ApplicationController {
+    @Autowired
+    lateinit var applicationService: ApplicationService
+
+    @ApiOperation(value = "提交工单", notes = "提交工单")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "json格式不正确")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/")
+    fun addApplication(@RequestBody expertApplication: ExpertApplication): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        applicationService.insertApplication(userId = uid, expertApplication = expertApplication)
+        return CResponseBody(data = null)
+    }
+
+    @ApiOperation(value = "审核工单-通过", notes = "审核工单-通过")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/pass")
+    fun passApplication(@PathVariable id: Int): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        applicationService.examineApplication(uid, id.toLong(), true)
+        return CResponseBody(data = null)
+    }
+
+    @ApiOperation(value = "审核工单-拒绝", notes = "审核工单-拒绝")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/refuse")
+    fun refuseApplication(@PathVariable id: Int): CResponseBody<Nothing?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        applicationService.examineApplication(uid, id.toLong(), false)
+        return CResponseBody(data = null)
+    }
+
+    @ApiOperation(value = "获取未处理的工单列表", notes = "获取未处理的工单列表")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/unhandled")
+    fun unhandledApplications(): CResponseBody<MutableList<Application>> = CResponseBody(data = applicationService.selectUnhandled())
+
+    @ApiOperation(value = "获取该管理员处理的用户列表", notes = "获取该管理员处理的用户列表")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/handled")
+    fun handledApplication(): CResponseBody<MutableList<Application>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = applicationService.selectByAdminId(uid)
+        return CResponseBody(data = result)
+    }
+
+    @ApiOperation(value = "获取该用户提交的工单列表", notes = "获取该用户提交的工单列表")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success")
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/")
+    fun applications(): CResponseBody<MutableList<Application>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = applicationService.selectByUserId(uid)
+        return CResponseBody(data = result)
+    }
+
+}

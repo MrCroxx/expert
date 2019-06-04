@@ -1,6 +1,6 @@
 package cn.edu.buaa.se.docs
 
-import org.apache.commons.lang.mutable.Mutable
+import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
@@ -221,5 +221,43 @@ class OrganizationService {
         organizationMapper.insertIfNotExists(newOrganization)
         return newOrganization.id
     }
+
+}
+
+@Service
+class ApplicationService {
+    @Autowired
+    lateinit var applicationMapper: ApplicationMapper
+    @Autowired
+    lateinit var userMapper: UserMapper
+    @Autowired
+    lateinit var expertMapper: ExpertMapper
+    @Autowired
+    lateinit var organizationMapper: OrganizationMapper
+
+    fun insertApplication(userId: Long, expertApplication: ExpertApplication) {
+        val om: ObjectMapper = ObjectMapper()
+        applicationMapper.insertApplication(user_id = userId, content = om.writeValueAsString(expertApplication), apply_time = Date())
+    }
+
+    fun examineApplication(adminId: Long, applicationId: Long, pass: Boolean) {
+        val om: ObjectMapper = ObjectMapper()
+        val application = applicationMapper.selectById(applicationId)
+        if (pass) {
+            val expertApplication: ExpertApplication = om.readValue(application.content, ExpertApplication::class.java)
+            val uid = application.user!!.id
+            val organization = Organization(name = expertApplication.organizationName)
+            organizationMapper.insertIfNotExists(organization)
+            userMapper.convertToExpert(uid)
+            expertMapper.insertExpertInfo(uid, expertApplication.name, expertApplication.subject, expertApplication.education, expertApplication.introduction, expertApplication.field, organization.id)
+        }
+        applicationMapper.examineApplication(applicationId, if (pass) 1 else 0, adminId, Date())
+    }
+
+    fun selectByUserId(userId: Long) = applicationMapper.selectByUserId(userId)
+
+    fun selectUnhandled() = applicationMapper.selectUnhandled()
+
+    fun selectByAdminId(adminId: Long) = applicationMapper.selectByAdminId(adminId)
 
 }

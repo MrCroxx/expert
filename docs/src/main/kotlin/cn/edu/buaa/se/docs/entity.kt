@@ -97,3 +97,13 @@ data class Organization(
         var rank: Int = 0,
         var experts: MutableList<User> = mutableListOf()
 )
+
+data class Application(
+        var id: Long = -1,
+        var user: User? = null,
+        var admin: User? = null,
+        var content: String = "",
+        var applyTime: Date = Date(),
+        var examineTime: Date = Date(),
+        var status: Int = 0
+)

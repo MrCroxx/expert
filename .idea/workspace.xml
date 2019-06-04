@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/service.kt" line="246" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="b850ff04-ec0e-4ef1-811d-bc3cf974aa42" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/config.kt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/config.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/dao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/dao.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/entity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/entity.kt" afterDir="false" />
@@ -60,11 +62,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/dao.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="200" column="66" selection-start-line="200" selection-start-column="66" selection-end-line="200" selection-end-column="66" />
+            <state relative-caret-position="239">
+              <caret line="32" column="102" selection-start-line="32" selection-start-column="102" selection-end-line="32" selection-end-column="102" />
             </state>
           </provider>
         </entry>
@@ -72,8 +74,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/entity.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-8">
-              <caret line="21" column="20" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
+            <state relative-caret-position="456">
+              <caret line="107" column="27" selection-start-line="101" selection-start-column="7" selection-end-line="107" selection-end-column="27" />
               <folding>
                 <element signature="e#29#86#0" expanded="true" />
               </folding>
@@ -90,11 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="132" column="23" selection-start-line="132" selection-start-column="23" selection-end-line="132" selection-end-column="23" />
+            <state relative-caret-position="115">
+              <caret line="518" column="73" selection-start-line="518" selection-start-column="73" selection-end-line="518" selection-end-column="73" />
               <folding>
                 <element signature="e#29#528#0" expanded="true" />
               </folding>
@@ -105,8 +107,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/service.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="113" column="49" selection-start-line="113" selection-start-column="49" selection-end-line="113" selection-end-column="49" />
+            <state relative-caret-position="264">
+              <caret line="244" column="69" selection-start-line="244" selection-start-column="69" selection-end-line="244" selection-end-column="69" />
             </state>
           </provider>
         </entry>
@@ -114,8 +116,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/model.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="580">
-              <caret line="82" column="12" selection-start-line="82" selection-start-column="12" selection-end-line="82" selection-end-column="12" />
+            <state relative-caret-position="379">
+              <caret line="91" column="29" selection-start-line="91" selection-start-column="29" selection-end-line="91" selection-end-column="29" />
               <folding>
                 <element signature="e#29#97#0" expanded="true" />
               </folding>
@@ -159,8 +161,9 @@
       <find>188.131.253.61</find>
       <find>www.wjqproject.cn</find>
       <find>ORDERED</find>
-      <find>follow</find>
       <find>click_time</find>
+      <find>follow</find>
+      <find>cn.edu.buaa.se.docs.UserMapper.selectById</find>
     </findStrings>
     <replaceStrings>
       <replace>author_paper</replace>
@@ -196,10 +199,10 @@
         <option value="$PROJECT_DIR$/gateway/src/main/kotlin/cn/edu/buaa/se/gateway/filter.kt" />
         <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/config.kt" />
         <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/entity.kt" />
+        <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt" />
+        <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/service.kt" />
         <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/model.kt" />
         <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/dao.kt" />
-        <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/service.kt" />
-        <option value="$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt" />
       </list>
     </option>
   </component>
@@ -227,9 +230,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="811" />
-    <option name="width" value="1116" />
-    <option name="height" value="1047" />
+    <option name="x" value="418" />
+    <option name="y" value="59" />
+    <option name="width" value="974" />
+    <option name="height" value="940" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -337,7 +341,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559666584815" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559682083084" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/applicationform" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -493,16 +497,24 @@
       <option name="project" value="LOCAL" />
       <updated>1559642384858</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Add Mother Fucker APIs.&#10;+ Add Mother Fucker APIs.">
+      <created>1559676531615</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1559676531615</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80894000" />
+    <option name="totallyTimeSpent" value="86722000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1401919" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.09381663" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -512,7 +524,7 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.7084222" visible="true" weight="0.3264642" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.7084222" weight="0.3264642" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -525,11 +537,11 @@
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="13" />
       <window_info anchor="bottom" id="Messages" order="14" sideWeight="0.49946696" weight="0.3264642" />
-      <window_info anchor="bottom" id="Run Dashboard" order="15" sideWeight="0.49946696" weight="0.36008677" />
+      <window_info anchor="bottom" id="Run Dashboard" order="15" sideWeight="0.49946696" visible="true" weight="0.36008677" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="right" id="Maven" order="3" visible="true" weight="0.13859275" />
+      <window_info anchor="right" id="Maven" order="3" weight="0.28411514" />
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
       <window_info anchor="right" id="Database" order="6" weight="0.32995737" />
@@ -563,7 +575,8 @@
     <MESSAGE value="Add Search Doc.&#10;+ Add Search Doc." />
     <MESSAGE value="Fix CORs problems. Add Follow APIs. Fix ClickTime.&#10;+ Fix CORs problem.&#10;+ Add follow APIs.&#10;+ Fix ClickTime.&#10;+ Fix field column for Expert Table." />
     <MESSAGE value="Add Update Info APIs. Add Global Exception Handler.&#10;+ Add Update User and Expert Info APIs.&#10;+ Add Global Exception Handler to handler Exception like Lacking Params.&#10;+ Add API for Finding Unclaimed Expert." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Update Info APIs. Add Global Exception Handler.&#10;+ Add Update User and Expert Info APIs.&#10;+ Add Global Exception Handler to handler Exception like Lacking Params.&#10;+ Add API for Finding Unclaimed Expert." />
+    <MESSAGE value="Add Mother Fucker APIs.&#10;+ Add Mother Fucker APIs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Mother Fucker APIs.&#10;+ Add Mother Fucker APIs." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/docs/HELP.md">
@@ -766,16 +779,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/entity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-8">
-          <caret line="21" column="20" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
-          <folding>
-            <element signature="e#29#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/DocsApplication.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-8">
@@ -783,37 +786,47 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/entity.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="107" column="27" selection-start-line="101" selection-start-column="7" selection-end-line="107" selection-end-column="27" />
+          <folding>
+            <element signature="e#29#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="518" column="73" selection-start-line="518" selection-start-column="73" selection-end-line="518" selection-end-column="73" />
+          <folding>
+            <element signature="e#29#528#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/model.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="82" column="12" selection-start-line="82" selection-start-column="12" selection-end-line="82" selection-end-column="12" />
+        <state relative-caret-position="379">
+          <caret line="91" column="29" selection-start-line="91" selection-start-column="29" selection-end-line="91" selection-end-column="29" />
           <folding>
             <element signature="e#29#97#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/dao.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="200" column="66" selection-start-line="200" selection-start-column="66" selection-end-line="200" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/service.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="113" column="49" selection-start-line="113" selection-start-column="49" selection-end-line="113" selection-end-column="49" />
+        <state relative-caret-position="264">
+          <caret line="244" column="69" selection-start-line="244" selection-start-column="69" selection-end-line="244" selection-end-column="69" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/controller.kt">
+    <entry file="file://$PROJECT_DIR$/docs/src/main/kotlin/cn/edu/buaa/se/docs/dao.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="132" column="23" selection-start-line="132" selection-start-column="23" selection-end-line="132" selection-end-column="23" />
-          <folding>
-            <element signature="e#29#528#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="239">
+          <caret line="32" column="102" selection-start-line="32" selection-start-column="102" selection-end-line="32" selection-end-column="102" />
         </state>
       </provider>
     </entry>
