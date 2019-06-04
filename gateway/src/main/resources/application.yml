@@ -6,6 +6,10 @@ eureka:
 server:
   port: 12380
 
+ribbon:
+  ReadTimeout: 60000
+  SocketTimeout: 60000
+
 spring:
   application:
     name: service-gateway
@@ -19,7 +23,8 @@ zuul:
   #    path: /service-hi/**
   #    serviceId: service-hi
   add-proxy-headers: true
-  sensitive-headers: Cookie,Set-Cookie
+  sensitive-headers: Cookie,Set-Cookie,Access-Control-Allow-Origin
+  ignored-headers: Access-Control-Allow-Origin,H-APP-Id,Token,APPToken
 
 basic:
   client-id: zuul

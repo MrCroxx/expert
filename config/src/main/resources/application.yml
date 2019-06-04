@@ -16,7 +16,7 @@ spring:
         enabled: true
 
   rabbitmq:
-    host: 188.131.253.61
+    host: 10.210.0.2
     port: 5672
     username: se
     password: se123456

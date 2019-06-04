@@ -24,8 +24,8 @@
         <module>gateway</module>
         <module>config</module>
         <module>oauth2</module>
-        <!-- Test Module -->
-        <module>hi</module>
+        <module>account</module>
+        <module>docs</module>
     </modules>
 
 

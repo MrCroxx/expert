@@ -128,7 +128,7 @@ spring:
 ```yaml
 spring:
   rabbitmq:
-    host: 188.131.253.61
+    host: 10.210.0.2
     port: 5672
     username: se
     password: se123456
@@ -262,7 +262,7 @@ class SwaggerConfig {
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://188.131.253.61:3306/se
+    url: jdbc:mysql://10.210.0.2:3306/se
     username: se
     password: se123456!@#
     driver-class-name: com.mysql.jdbc.Driver

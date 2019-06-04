@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
@@ -39,9 +40,17 @@ import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
+
+@Configuration
+class PasswordEncoderConfig {
+    @Bean
+    fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
+}
+
 @Configuration
 @EnableAuthorizationServer
 class OAuth2Config : AuthorizationServerConfigurerAdapter() {
+
 
     @Autowired
     lateinit var authenticationManager: AuthenticationManager
@@ -116,16 +125,14 @@ class OAuth2Config : AuthorizationServerConfigurerAdapter() {
 @Component
 class CustomTokenEnhancer : TokenEnhancer {
     override fun enhance(accessToken: OAuth2AccessToken, authentication: OAuth2Authentication): OAuth2AccessToken {
-        return accessToken
-        /*
+        // return accessToken
         val at: DefaultOAuth2AccessToken? = accessToken as? DefaultOAuth2AccessToken
         val user: User = (authentication.principal as? User)!!
         at?.additionalInformation = mutableMapOf(
-                "uid" to user.id,
-                "authorities" to user.authorities
-        )
+                Pair("uid", user.id)
+        ) as Map<String, Any>?
         return (at as? OAuth2AccessToken)!!
-        */
+
     }
 }
 
@@ -147,8 +154,6 @@ class CustomUserDetailsService : UserDetailsService {
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class CustomWebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    @Bean
-    fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 
     @Autowired
     lateinit var userDetailsService: CustomUserDetailsService
