@@ -2,7 +2,6 @@ package cn.edu.buaa.se.docs
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -47,11 +46,16 @@ class UserService {
     @Autowired
     lateinit var userMapper: UserMapper
     @Autowired
+    lateinit var expertMapper: ExpertMapper
+    @Autowired
     lateinit var paperMapper: PaperMapper
     @Autowired
     lateinit var patentMapper: PatentMapper
+    @Autowired
+    lateinit var organizationService: OrganizationService
 
-    fun getUserInfoId(id: Long): User? {
+
+    fun getUserInfoById(id: Long): User? {
         val user = userMapper.selectById(id) ?: return null
         if (user.role != ROLE.ROLE_EXPERT.value.toShort() || user.expert == null) return user
         val expert: Expert = user.expert!!
@@ -60,6 +64,33 @@ class UserService {
         expert.patents_applicant = patentMapper.selectByApplicantId(id)
         user.expert = expert
         return user
+    }
+
+    fun findUnchaimedUserByExpertName(name: String): User? {
+        val user = userMapper.selectUnclaimedUserByExpertName(name) ?: return null
+        val expert = user.expert!!
+        expert.papers = paperMapper.selectByAuthorId(user.id)
+        expert.patents_inventor = patentMapper.selectByInventorId(user.id)
+        expert.patents_applicant = patentMapper.selectByApplicantId(user.id)
+        user.expert = expert
+        return user
+    }
+
+    fun updateEmail(id: Long, email: String): ErrCode {
+        val res: Int = userMapper.updateEmail(id, email)
+        return when (res) {
+            0 -> ErrCode.DATA_NOT_EXISTS
+            else -> ErrCode.SUCCESS
+        }
+    }
+
+    fun updateExpertInfo(id: Long, name: String, subject: String, education: String, introduction: String, field: String, organizationName: String): ErrCode {
+        val organizationId: Long = organizationService.insertIfNotExists(organizationName)
+        val affectRows: Int = expertMapper.updateExpertInfo(id, name, subject, education, introduction, field, organizationId)
+        return when (affectRows) {
+            0 -> ErrCode.DATA_NOT_EXISTS
+            else -> ErrCode.SUCCESS
+        }
     }
 }
 
@@ -146,4 +177,17 @@ class FollowService {
             else -> ErrCode.SUCCESS
         }
     }
+}
+
+@Service
+class OrganizationService {
+    @Autowired
+    lateinit var organizationMapper: OrganizationMapper
+
+    fun insertIfNotExists(name: String): Long {
+        val newOrganization = Organization(name = name)
+        organizationMapper.insertIfNotExists(newOrganization)
+        return newOrganization.id
+    }
+
 }

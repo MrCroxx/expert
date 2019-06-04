@@ -1,5 +1,6 @@
 package cn.edu.buaa.se.docs
 
+import org.codehaus.jackson.annotate.JsonProperty
 import java.util.*
 
 enum class ErrCode constructor(val code: Int) {
@@ -45,4 +46,23 @@ data class SearchResult(
 data class Collections(
         var papers: MutableList<Paper>,
         var patents: MutableList<Patent>
+)
+
+data class RqUpdateEmail(
+        val email: String,
+        val NOTHING: Nothing?
+)
+
+data class RqUpdateExpertInfo(
+        val name: String,
+        val subject: String,
+        val education: String,
+        val introduction: String,
+        val field: String,
+        val organizationName: String
+)
+
+data class RqFindUnclaimedUser(
+        val name: String,
+        val NOTHING: Nothing?
 )

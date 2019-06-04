@@ -33,14 +33,12 @@ class SearchController {
     )
     @GetMapping("")
     fun search(
-            keyword: String?,
+            keyword: String,
             type: String?,
             sort: String?,
             year: Int?,
             limit: Int?
     ): CResponseBody<SearchResult?> {
-        keyword
-                ?: return CResponseBody(errcode = ErrCode.LACK_OF_PARAMETERS.code, msg = ErrCode.LACK_OF_PARAMETERS.name, data = null)
         val eType = DocType.fromString(type ?: "")
         val eSort = SearchSort.fromString(sort ?: "")
         val nLimit = limit ?: PAGE_COUNT * 10
@@ -258,7 +256,7 @@ class UserController {
     )
     @GetMapping("/{id}")
     fun getUserInfoById(@PathVariable id: Int): CResponseBody<User?> {
-        val result = userService.getUserInfoId(id.toLong())
+        val result = userService.getUserInfoById(id.toLong())
         return when (result) {
             null -> CResponseBody(errcode = ErrCode.DATA_NOT_EXISTS.code, msg = ErrCode.DATA_NOT_EXISTS.name, data = null)
             else -> CResponseBody(data = result)
@@ -276,7 +274,70 @@ class UserController {
         val details = authentication.details as OAuth2AuthenticationDetails
         val decodedDetails = details.decodedDetails as MutableMap<String, *>
         val uid: Long = (decodedDetails["uid"] as Int).toLong()
-        val result = userService.getUserInfoId(uid)
+        val result = userService.getUserInfoById(uid)
         return CResponseBody(data = result)
     }
+
+    @ApiOperation(value = "更新用户邮箱", notes = "更新已登录用户邮箱")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "json格式不正确(此RequestBody中不需要设置NOTHING的值)")
+    )
+    @ApiImplicitParams(
+            ApiImplicitParam(name = "email", value = "新email值", dataType = "String", required = true)
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/email/update")
+    fun updateEmail(@RequestBody rqUpdateEmail: RqUpdateEmail): CResponseBody<String?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = userService.updateEmail(uid, rqUpdateEmail.email)
+        return CResponseBody(errcode = result.code, msg = result.name, data = rqUpdateEmail.email)
+    }
+
+    @ApiOperation(value = "更新专家信息", notes = "更新专家详细信息")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "json格式不正确(此RequestBody中不需要设置NOTHING的值)")
+    )
+    @ApiImplicitParams(
+            ApiImplicitParam(name = "name", value = "专家姓名", dataType = "String", required = true),
+            ApiImplicitParam(name = "subject", value = "专家学科", dataType = "String", required = true),
+            ApiImplicitParam(name = "education", value = "专家教育程度", dataType = "String", required = true),
+            ApiImplicitParam(name = "introduction", value = "专家介绍", dataType = "String", required = true),
+            ApiImplicitParam(name = "field", value = "专家领域", dataType = "String", required = true),
+            ApiImplicitParam(name = "organizationName", value = "专家所在机构（如果不存在会创建新机构）", dataType = "String", required = true)
+    )
+    @PreAuthorize("hasRole('ROLE_EXPERT')")
+    @PostMapping("/expert/info/update")
+    fun updateExpertInfo(@RequestBody rqUpdateExpertInfo: RqUpdateExpertInfo): CResponseBody<User?> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val details = authentication.details as OAuth2AuthenticationDetails
+        val decodedDetails = details.decodedDetails as MutableMap<String, *>
+        val uid: Long = (decodedDetails["uid"] as Int).toLong()
+        val result = userService.updateExpertInfo(
+                id = uid,
+                name = rqUpdateExpertInfo.name,
+                subject = rqUpdateExpertInfo.subject,
+                education = rqUpdateExpertInfo.education,
+                introduction = rqUpdateExpertInfo.introduction,
+                field = rqUpdateExpertInfo.field,
+                organizationName = rqUpdateExpertInfo.organizationName
+        )
+        return CResponseBody(errcode = result.code, msg = result.name, data = userService.getUserInfoById(uid))
+    }
+
+    @ApiOperation(value = "查找未被认领的用户及相关信息", notes = "根据用户名查找未被认领的用户及相关信息")
+    @ApiResponses(
+            ApiResponse(code = 20000, message = "success"),
+            ApiResponse(code = 40002, message = "json格式不正确(此RequestBody中不需要设置NOTHING的值)")
+    )
+    @ApiImplicitParams(
+            ApiImplicitParam(name = "name", value = "查询专家姓名", dataType = "String", required = true)
+    )
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/unclaimed")
+    fun findUnclaimedUser(@RequestBody rqFindUnclaimedUser: RqFindUnclaimedUser): CResponseBody<User?> = CResponseBody(errcode = ErrCode.SUCCESS.code, msg = ErrCode.SUCCESS.name, data = userService.findUnchaimedUserByExpertName(rqFindUnclaimedUser.name))
 }

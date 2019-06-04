@@ -26,6 +26,11 @@ interface ExpertMapper : BaseMapper<Expert> {
     )
     @Throws(DataRetrievalFailureException::class)
     fun selectById(id: Long): Expert?
+
+    @Update("UPDATE expert SET name=#{name}, subject=#{subject}, education=#{education}, introduction=#{introduction}, field=#{field}, organization_id=#{organizationId} WHERE id=#{id}")
+    fun updateExpertInfo(id: Long, name: String, subject: String, education: String, introduction: String, field: String, organizationId: Long): Int
+
+
 }
 
 @Mapper
@@ -70,6 +75,13 @@ interface UserMapper : BaseMapper<User> {
     @Delete("DELETE FROM follow WHERE follower_id=#{follower_id} AND followed_id=#{followed_id}")
     fun deleteFollowPair(follower_id: Long, followed_id: Long): Int
 
+    @Update("UPDATE user SET email=#{email} WHERE id=#{id}")
+    fun updateEmail(id: Long, email: String): Int
+
+    @Select("SELECT * FROM user JOIN expert ON user.id=expert.id WHERE user.email='' AND user.role=2 AND expert.name=#{name}")
+    @ResultMap("UserMap")
+    fun selectUnclaimedUserByExpertName(name: String): User?
+
 }
 
 @Mapper
@@ -83,6 +95,10 @@ interface OrganizationMapper : BaseMapper<Organization> {
             Result(property = "rank", column = "rank")
     )
     fun selectById(id: Long): Organization
+
+    @Insert("INSERT IGNORE INTO organization(name) VALUES(#{name})")
+    @SelectKey(statement = ["SELECT id FROM organization WHERE name=#{name}"], keyProperty = "id", keyColumn = "id", before = false, resultType = Long::class)
+    fun insertIfNotExists(organization: Organization)
 }
 
 @Mapper

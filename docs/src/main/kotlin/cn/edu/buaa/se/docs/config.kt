@@ -1,5 +1,6 @@
 package cn.edu.buaa.se.docs
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import feign.RequestInterceptor
 import feign.RequestTemplate
 import org.springframework.beans.factory.annotation.Autowired
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
+import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer
@@ -20,6 +23,12 @@ import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.MissingServletRequestParameterException
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.multipart.support.MissingServletRequestPartException
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import springfox.documentation.builders.ApiInfoBuilder
@@ -31,6 +40,7 @@ import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.IllegalArgumentException
 import java.util.stream.Collectors
 
 
@@ -121,6 +131,19 @@ class FeignOauth2RequestInterceptor : RequestInterceptor {
     }
 }
 
+@ControllerAdvice
+@ResponseBody
+class GlobalExceptionHandler {
+    @ExceptionHandler(value = [
+        HttpMessageNotReadableException::class,
+        IllegalArgumentException::class,
+        InvalidDefinitionException::class
+    ])
+    @ResponseStatus(HttpStatus.OK)
+    fun handleHttpMessageNotReadableException(): CResponseBody<Nothing?> = CResponseBody(errcode = ErrCode.LACK_OF_PARAMETERS.code, msg = ErrCode.LACK_OF_PARAMETERS.name, data = null)
+
+
+}
 
 @Configuration
 @EnableSwagger2
