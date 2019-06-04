@@ -5,7 +5,12 @@ import com.netflix.zuul.context.RequestContext
 import org.apache.commons.codec.binary.Base64
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 
 @Component
 class BasicFilter : ZuulFilter() {
@@ -33,4 +38,21 @@ class BasicFilter : ZuulFilter() {
     override fun filterType(): String = FilterConstants.PRE_TYPE
 
     override fun filterOrder(): Int = 11
+}
+
+@Configuration
+class CorsConfig {
+    @Bean
+    fun corsFilter(): CorsFilter {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.allowCredentials = true
+        config.allowedOrigins = listOf("*")
+        config.allowedHeaders = listOf("*")
+        config.allowedMethods = listOf("*")
+        config.maxAge = 3600
+        source.registerCorsConfiguration("/**", config)
+        return CorsFilter(source)
+    }
+
 }

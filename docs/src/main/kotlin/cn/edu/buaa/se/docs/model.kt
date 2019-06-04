@@ -1,5 +1,6 @@
 package cn.edu.buaa.se.docs
 
+import org.codehaus.jackson.annotate.JsonProperty
 import java.util.*
 
 enum class ErrCode constructor(val code: Int) {
@@ -7,6 +8,7 @@ enum class ErrCode constructor(val code: Int) {
     TYPE_ILLEGAL(40001),
     DATA_NOT_EXISTS(40004),
     DATA_INTEGRITY_VIOLATION(40005),
+    LACK_OF_PARAMETERS(40002),
     UNKNOWN(50000);
 
     companion object {
@@ -44,4 +46,48 @@ data class SearchResult(
 data class Collections(
         var papers: MutableList<Paper>,
         var patents: MutableList<Patent>
+)
+
+data class RqUpdateEmail(
+        val email: String,
+        val NOTHING: Nothing?
+)
+
+data class RqUpdateExpertInfo(
+        val name: String,
+        val subject: String,
+        val education: String,
+        val introduction: String,
+        val field: String,
+        val organizationName: String
+)
+
+data class RqNewPaper(
+        var title: String,
+        var paperRec: String,
+        var dataRec: String,
+        var publishTime: Date,
+        var abstract: String,
+        var keywords: String
+)
+
+data class RqNewPatent(
+        var title: String,
+        var applicationNumber: String,
+        var publicationNumber: String,
+        var agency: String,
+        var agent: String,
+        var summary: String,
+        var address: String,
+        var applicationDate: Date,
+        var publicationDate: Date
+)
+
+data class ExpertApplication(
+        var name: String = "",
+        var subject: String = "",
+        var education: String = "",
+        var introduction: String = "",
+        var organizationName: String = "",
+        var field: String = ""
 )

@@ -19,7 +19,7 @@ interface Doc {
 
 @ApiModel
 data class Paper(
-        var id: Long? = -1,
+        var id: Long = -1,
         var title: String = "",
         var paperRec: String = "",
         var dataRec: String = "",
@@ -37,7 +37,7 @@ data class Paper(
 
 @ApiModel
 data class Patent(
-        var id: Long? = -1,
+        var id: Long = -1,
         var title: String = "",
         var applicationNumber: String = "",
         var publicationNumber: String = "",
@@ -81,6 +81,7 @@ data class Expert(
         var subject: String = "",
         var education: String = "",
         var introduction: String = "",
+        var field: String = "",
         var famousValue: Double = 0.0,
         var organization: Organization? = null,
         var papers: MutableList<Paper> = mutableListOf(),
@@ -95,4 +96,14 @@ data class Organization(
         var contact: String = "",
         var rank: Int = 0,
         var experts: MutableList<User> = mutableListOf()
+)
+
+data class Application(
+        var id: Long = -1,
+        var user: User? = null,
+        var admin: User? = null,
+        var content: String = "",
+        var applyTime: Date = Date(),
+        var examineTime: Date = Date(),
+        var status: Int = 0
 )
