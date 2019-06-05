@@ -293,10 +293,10 @@ interface PatentMapper : BaseMapper<Patent> {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     fun insertPatent(patent: Patent)
 
-    @Insert("INSERT INTO applicant_patent(applicant_id,patent_id) VALUES(#{applicant_id},#{paper_id})")
+    @Insert("INSERT INTO applicant_patent(applicant_id,patent_id) VALUES(#{applicant_id},#{patent_id})")
     fun insertPatentApplicant(applicant_id: Long, patent_id: Long): Int
 
-    @Insert("INSERT INTO inventor_patent(inventor_id,patent_id) VALUES(#{inventor_id},#{paper_id})")
+    @Insert("INSERT INTO inventor_patent(inventor_id,patent_id) VALUES(#{inventor_id},#{patent_id})")
     fun insertPatentInventor(inventor_id: Long, patent_id: Long): Int
 
     @Delete("DELETE FROM applicant_patent WHERE applicant_id=#{applicant_id} AND patent_id=#{patent_id}")
