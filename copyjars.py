@@ -14,7 +14,6 @@ if __name__ == "__main__":
         "oauth2",
         "gateway",
         "account",
-        "applicationform",
         "docs"
     ]
     for module in modules:
