@@ -1,4 +1,9 @@
 # Expert Resource Sharing Platform
+
+*本项目为软工课的大作业项目，第一次尝试使用Spring Cloud开发微服务，遇到了很多坑并在该项目中完成了配置。目前该项目仅作为一个基于Maven与Kotlin的Spring Cloud项目的示例，其中的服务器与数据库等已失效，因此配置文件中敏感信息可以保留。*
+
+*本项目中仍有很多不足之处，代码仅供参考使用。*
+
 ## 一、模块简介
 - eureka：Eureka服务发现服务器。
 - config：分布式高可用配置中心，使用RabbitMQ，支持Spring Cloud Bus实时刷新配置。
